@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+/* Tell Tailwind v4 to use class-based dark mode (.dark) instead of
+   @media (prefers-color-scheme: dark). Without this, dark: classes apply
+   based on OS system preference, making text white even when the page
+   shows a light background — causing invisible text. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  /* Tailwind color aliases — pulled from tokens.css */
+  --color-maroon-50:  var(--color-brand-50);
+  --color-maroon-100: var(--color-brand-100);
+  --color-maroon-200: var(--color-brand-200);
+  --color-maroon-300: var(--color-brand-300);
+  --color-maroon-400: var(--color-brand-400);
+  --color-maroon-500: var(--color-brand-500);
+  --color-maroon-600: var(--color-brand-600);
+  --color-maroon-700: var(--color-brand-700);
+  --color-maroon-800: var(--color-brand-800);
+  --color-maroon-900: var(--color-brand-900);
+  --color-maroon-950: var(--color-brand-950);
+
+  --color-gold-50:  var(--color-accent-50);
+  --color-gold-100: var(--color-accent-100);
+  --color-gold-200: var(--color-accent-200);
+  --color-gold-300: var(--color-accent-300);
+  --color-gold-400: var(--color-accent-400);
+  --color-gold-500: var(--color-accent-500);
+  --color-gold-600: var(--color-accent-600);
+  --color-gold-700: var(--color-accent-700);
+  --color-gold-800: var(--color-accent-800);
+  --color-gold-900: var(--color-accent-900);
+}
+
+/* Legacy aliases — point to tokens so existing code keeps working */
+:root {
+  --background: var(--bg-page);
+  --foreground: var(--text-primary);
+  --surface:    var(--bg-surface);
+  --border:     var(--bg-border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Only transition interactive UI elements, never backgrounds or text colors.
+   Transitioning background/color causes text to be invisible during theme switch
+   because Tailwind dark: classes flip instantly while CSS transitions lag behind. */
+button, a, input, textarea, select {
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+/* Force inputs/textareas to inherit text color from body so they
+   always match the current theme without needing explicit Tailwind classes */
+input, textarea, select {
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c5c4bf;
+  border-radius: 3px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3a3a38;
+}

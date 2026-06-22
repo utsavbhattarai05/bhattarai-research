@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "home": "Home",
+    "research": "Research",
+    "journey": "Journey",
+    "about": "About",
+    "contact": "Contact",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "admin": "Dashboard"
+  },
+  "home": {
+    "subtitle": "Researcher · Scholar · Nepal",
+    "browseResearch": "Browse research",
+    "downloadCV": "Download CV",
+    "publications": "Publications",
+    "downloads": "Downloads",
+    "yearsActive": "Years active",
+    "collaborators": "Collaborators",
+    "featuredResearch": "Featured research",
+    "viewAll": "View all",
+    "about": "About",
+    "readMore": "Read more",
+    "getInTouch": "Get in touch",
+    "email": "Email",
+    "location": "Location"
+  },
+  "research": {
+    "title": "Research & publications",
+    "subtitle": "Browse, search, and download academic research",
+    "searchPlaceholder": "Search by title, abstract, or keyword...",
+    "allTypes": "All types",
+    "allYears": "All years",
+    "allTags": "All tags",
+    "journal": "Journal article",
+    "conference": "Conference paper",
+    "book_chapter": "Book chapter",
+    "working_paper": "Working paper",
+    "thesis": "Thesis",
+    "other": "Other",
+    "downloadPDF": "Download PDF",
+    "cite": "Cite",
+    "share": "Share",
+    "noResults": "No publications found matching your search.",
+    "loginToDownload": "Sign in to download",
+    "relatedResearch": "Related research",
+    "abstract": "Abstract",
+    "authors": "Authors",
+    "publishedIn": "Published in",
+    "downloads": "downloads"
+  },
+  "journey": {
+    "title": "Life & journey",
+    "subtitle": "From the hills of Nepal to the world of research — a story of curiosity and dedication",
+    "scrollToExplore": "Scroll to explore",
+    "early_life": "Early life",
+    "education": "Education",
+    "career": "Career",
+    "research": "Research",
+    "achievement": "Achievement"
+  },
+  "about": {
+    "title": "About",
+    "researchInterests": "Research interests",
+    "downloadCV": "Download full CV"
+  },
+  "contact": {
+    "title": "Get in touch",
+    "subtitle": "Have a question about the research or interested in collaboration? Send a message.",
+    "name": "Your name",
+    "email": "Your email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send message",
+    "success": "Message sent successfully!",
+    "error": "Something went wrong. Please try again."
+  },
+  "citation": {
+    "title": "Cite this publication",
+    "apa": "APA",
+    "harvard": "Harvard",
+    "bibtex": "BibTeX",
+    "copied": "Copied to clipboard!"
+  },
+  "footer": {
+    "copyright": "© {year} Dr. Dhruba Prasad Bhattarai. All rights reserved.",
+    "builtWith": "Built with care in Nepal"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add new"
+  }
+}

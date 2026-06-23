@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
-import { sendVerificationEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,6 +56,7 @@ export async function POST(req: NextRequest) {
       verificationTokenExpiry,
     });
 
+    const { sendVerificationEmail } = await import('@/lib/email');
     await sendVerificationEmail(email, name, verificationToken);
 
     return NextResponse.json({ message: 'Account created. Check your email to verify.' }, { status: 201 });

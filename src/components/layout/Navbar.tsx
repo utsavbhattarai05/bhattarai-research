@@ -7,6 +7,7 @@ import { useLanguage, useSignIn } from '@/components/Providers';
 import { useState, useEffect } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { FiSun, FiMoon } from 'react-icons/fi';
+import Logo from '@/components/ui/Logo';
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -32,8 +33,8 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="text-lg font-semibold text-maroon-700 dark:text-maroon-400">
-            {language === 'ne' ? 'डा. भट्टराई' : 'Dr. Bhattarai'}
+          <Link href="/" className="flex items-center">
+            <Logo size={36} variant="full" />
           </Link>
 
           {/* Desktop nav */}

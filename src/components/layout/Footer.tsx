@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/components/Providers';
 import { FiLinkedin, FiGlobe, FiMail } from 'react-icons/fi';
 import { FaResearchgate, FaFacebook } from 'react-icons/fa';
+import { LogoSeal } from '@/components/ui/Logo';
 
 interface SocialLinks {
   linkedin?:      string;
@@ -52,9 +53,12 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
-          {/* Copyright */}
-          <div className="text-sm text-gray-500 dark:text-gray-500">
-            {t('footer.copyright').replace('{year}', year.toString())}
+          {/* Logo + copyright */}
+          <div className="flex items-center gap-3">
+            <LogoSeal size={28} />
+            <div className="text-sm text-gray-500 dark:text-gray-500">
+              {t('footer.copyright').replace('{year}', year.toString())}
+            </div>
           </div>
 
           {/* Social links */}

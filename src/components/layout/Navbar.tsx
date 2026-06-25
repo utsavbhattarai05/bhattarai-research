@@ -140,9 +140,30 @@ export default function Navbar() {
                   {mounted && (theme === 'dark' ? <FiSun size={16} /> : <FiMoon size={16} />)}
                 </button>
               </div>
-              {!session && (
+              {session ? (
+                <div className="flex flex-col gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {session.user?.name}
+                  </span>
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm font-medium text-maroon-700 dark:text-maroon-400 hover:underline"
+                    >
+                      {t('nav.admin')}
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => { signOut(); setMobileOpen(false); }}
+                    className="text-left text-sm text-gray-600 dark:text-gray-400 hover:text-maroon-700 dark:hover:text-maroon-400 transition-colors"
+                  >
+                    {t('nav.signOut')}
+                  </button>
+                </div>
+              ) : (
                 <button
-                  onClick={openSignIn}
+                  onClick={() => { openSignIn(); setMobileOpen(false); }}
                   className="flex items-center justify-center gap-2 text-xs px-3 py-2 bg-maroon-700 text-white rounded-lg"
                 >
                   {t('nav.signIn')}

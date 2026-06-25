@@ -29,13 +29,13 @@ function RecentItem({ pub, language, onCite }: { pub: Publication; language: str
     <motion.div
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
-      className="flex items-center gap-3 bg-white/[0.02] dark:bg-white/[0.02] border border-white/5 dark:border-white/5 rounded-xl px-4 py-3 hover:bg-white/[0.04] transition-colors group"
+      className="flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors group"
     >
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-200 dark:text-gray-200 truncate" style={{ fontFamily: 'Georgia, serif' }}>
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate" style={{ fontFamily: 'Georgia, serif' }}>
           {title}
         </p>
-        <p className="text-[10px] text-gray-600 dark:text-gray-600 mt-0.5">
+        <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-0.5">
           {pub.year} · {pub.journal}
         </p>
       </div>
@@ -119,22 +119,22 @@ export default function ResearchPage() {
     <>
       <CiteModal publication={citeTarget} onClose={() => setCiteTarget(null)} />
 
-      <div className="w-full px-4 sm:px-8 py-8 bg-gray-950 dark:bg-gray-950 min-h-screen">
+      <div className="w-full px-4 sm:px-8 py-8 min-h-screen" style={{ background: 'var(--bg-page)' }}>
 
         {/* Header */}
         <div className="flex items-center justify-between mb-5 max-w-5xl mx-auto">
-          <h1 className="text-lg font-semibold text-gray-100" style={{ fontFamily: 'Georgia, serif' }}>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100" style={{ fontFamily: 'Georgia, serif' }}>
             {language === 'ne' ? 'अनुसन्धान संग्रह' : 'Research Collection'}
           </h1>
           <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" size={13} />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-600" size={13} />
             <input
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder={language === 'ne' ? 'खोज्नुहोस्...' : 'Search...'}
               style={{ color: 'var(--text-primary)' }}
-              className="pl-8 pr-3 py-1.5 text-sm bg-white/5 border border-white/8 rounded-lg w-40 focus:outline-none focus:border-maroon-700/50"
+              className="pl-8 pr-3 py-1.5 text-sm bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/8 rounded-lg w-40 focus:outline-none focus:border-maroon-700/50"
             />
           </div>
         </div>
@@ -147,20 +147,24 @@ export default function ResearchPage() {
               onClick={() => switchType(cat.type)}
               className={`flex flex-col items-center gap-2 py-5 rounded-2xl border-2 transition-all duration-200 cursor-pointer ${
                 activeType === cat.type
-                  ? 'bg-maroon-900/30 border-maroon-700 dark:border-maroon-600'
-                  : 'bg-white/[0.02] border-transparent hover:bg-white/[0.04] hover:border-white/10'
+                  ? 'bg-maroon-50 dark:bg-maroon-900/30 border-maroon-600 dark:border-maroon-700'
+                  : 'bg-white dark:bg-white/[0.02] border-gray-200 dark:border-transparent hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:border-gray-300 dark:hover:border-white/10'
               }`}
             >
               <span className={`text-4xl transition-transform duration-200 ${activeType === cat.type ? 'scale-110' : ''}`}>
                 {cat.icon}
               </span>
               <span className={`text-[11px] font-semibold uppercase tracking-widest transition-colors ${
-                activeType === cat.type ? 'text-maroon-400' : 'text-gray-600'
+                activeType === cat.type
+                  ? 'text-maroon-700 dark:text-maroon-400'
+                  : 'text-gray-500 dark:text-gray-600'
               }`}>
                 {language === 'ne' ? cat.labelNe : cat.labelEn}
               </span>
               <span className={`text-xs transition-colors ${
-                activeType === cat.type ? 'text-maroon-700' : 'text-gray-700'
+                activeType === cat.type
+                  ? 'text-maroon-500 dark:text-maroon-700'
+                  : 'text-gray-400 dark:text-gray-700'
               }`}>
                 {counts[cat.type]} {language === 'ne' ? 'पत्रहरू' : 'papers'}
               </span>
@@ -172,19 +176,19 @@ export default function ResearchPage() {
         <div className="max-w-5xl mx-auto" ref={listRef}>
           {/* Section label */}
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex-1 h-px bg-white/5" />
+            <div className="flex-1 h-px bg-gray-200 dark:bg-white/5" />
             <AnimatePresence mode="wait">
               <motion.span
                 key={recentLabel}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="text-[10px] text-gray-600 uppercase tracking-widest whitespace-nowrap font-medium"
+                className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest whitespace-nowrap font-medium"
               >
                 {recentLabel}
               </motion.span>
             </AnimatePresence>
-            <div className="flex-1 h-px bg-white/5" />
+            <div className="flex-1 h-px bg-gray-200 dark:bg-white/5" />
           </div>
 
           {filteredLoading ? (
@@ -210,14 +214,14 @@ export default function ResearchPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/5">
+            <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-200 dark:border-white/5">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}
-                className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-400 disabled:opacity-30 transition-colors">
+                className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-400 disabled:opacity-30 transition-colors">
                 <FiChevronLeft size={13} /> {language === 'ne' ? 'अघिल्लो' : 'Previous'}
               </button>
-              <span className="text-xs text-gray-700">{page} / {totalPages}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-700">{page} / {totalPages}</span>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
-                className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-400 disabled:opacity-30 transition-colors">
+                className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-400 disabled:opacity-30 transition-colors">
                 {language === 'ne' ? 'अर्को' : 'Next'} <FiChevronRight size={13} />
               </button>
             </div>

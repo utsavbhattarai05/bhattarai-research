@@ -6,151 +6,70 @@ import { useLanguage } from '@/components/Providers';
 import { Milestone } from '@/components/ui/TimelineItem';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
-const CATEGORY_CONFIG: Record<string, {
-  emoji: string;
-  bg: string;
-  text: string;
-  border: string;
-  label: string;
-}> = {
-  early_life:  { emoji: '🌱', bg: 'bg-pink-50 dark:bg-pink-950',    text: 'text-pink-700 dark:text-pink-300',     border: 'border-pink-200 dark:border-pink-800',   label: 'Early life' },
-  education:   { emoji: '📚', bg: 'bg-blue-50 dark:bg-blue-950',    text: 'text-blue-700 dark:text-blue-300',     border: 'border-blue-200 dark:border-blue-800',   label: 'Education' },
-  career:      { emoji: '💼', bg: 'bg-gold-50 dark:bg-gold-900',    text: 'text-gold-700 dark:text-gold-300',     border: 'border-gold-200 dark:border-gold-800',   label: 'Career' },
-  research:    { emoji: '🔬', bg: 'bg-maroon-50 dark:bg-maroon-950', text: 'text-maroon-700 dark:text-maroon-400', border: 'border-maroon-200 dark:border-maroon-800', label: 'Research' },
-  achievement: { emoji: '🏆', bg: 'bg-green-50 dark:bg-green-950',  text: 'text-green-700 dark:text-green-300',   border: 'border-green-200 dark:border-green-800', label: 'Achievement' },
+const CHAPTERS: { key: string; icon: string; label: string; short: string }[] = [
+  { key: 'early_life',  icon: '🌱', label: 'Beginnings', short: 'Ch.1' },
+  { key: 'education',   icon: '📚', label: 'Education',  short: 'Ch.2' },
+  { key: 'career',      icon: '💼', label: 'Career',     short: 'Ch.3' },
+  { key: 'research',    icon: '🔬', label: 'Research',   short: 'Ch.4' },
+  { key: 'achievement', icon: '🏆', label: 'Legacy',     short: 'Ch.5' },
+];
+
+const CHAPTER_COLORS: Record<string, { text: string; accent: string; light: string }> = {
+  early_life:  { text: 'text-pink-700 dark:text-pink-300',   accent: '#be185d', light: '#fdf2f8' },
+  education:   { text: 'text-blue-700 dark:text-blue-300',   accent: '#1d4ed8', light: '#eff6ff' },
+  career:      { text: 'text-amber-700 dark:text-amber-300', accent: '#b45309', light: '#fffbeb' },
+  research:    { text: 'text-maroon-700 dark:text-maroon-400', accent: '#8B1A1A', light: '#fdf2f2' },
+  achievement: { text: 'text-green-700 dark:text-green-300', accent: '#15803d', light: '#f0fdf4' },
 };
-
-function MilestoneCard({ milestone, index, isOpen, onToggle, language }: {
-  milestone: Milestone;
-  index: number;
-  isOpen: boolean;
-  onToggle: () => void;
-  language: string;
-}) {
-  const cfg = CATEGORY_CONFIG[milestone.category] ?? CATEGORY_CONFIG.career;
-  const title = language === 'ne' && milestone.title.ne ? milestone.title.ne : milestone.title.en;
-  const description = language === 'ne' && milestone.description.ne ? milestone.description.ne : milestone.description.en;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-    >
-      <button
-        onClick={onToggle}
-        className={`w-full text-left rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
-          isOpen
-            ? `${cfg.bg} ${cfg.border}`
-            : 'bg-[var(--surface)] border-transparent hover:border-gray-200 dark:hover:border-gray-700'
-        } ${milestone.isCurrent ? 'ring-2 ring-maroon-400 dark:ring-maroon-500' : ''}`}
-      >
-        {/* Card header — always visible */}
-        <div className="flex items-center gap-4 p-4">
-          {/* Emoji bubble */}
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 transition-all duration-300 ${
-            isOpen ? 'scale-110' : ''
-          } ${cfg.bg} border ${cfg.border}`}>
-            {cfg.emoji}
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-0.5">
-              <span className={`text-xs font-semibold ${cfg.text}`}>
-                {milestone.isCurrent ? `${milestone.year} — Present` : milestone.year}
-              </span>
-              {milestone.isCurrent && (
-                <span className="flex items-center gap-1 text-[10px] bg-maroon-100 dark:bg-maroon-900 text-maroon-700 dark:text-maroon-300 px-2 py-0.5 rounded-full font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-maroon-500 animate-pulse inline-block" />
-                  Now
-                </span>
-              )}
-            </div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white leading-snug truncate">
-              {title}
-            </h3>
-          </div>
-
-          {/* Expand indicator */}
-          <motion.div
-            animate={{ rotate: isOpen ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-            className={`text-lg flex-shrink-0 ${cfg.text}`}
-          >
-            ↓
-          </motion.div>
-        </div>
-
-        {/* Expanded content */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden"
-            >
-              <div className="px-4 pb-4 pt-0">
-                <div className={`h-px ${cfg.border} border-t mb-3`} />
-                <p className={`text-sm leading-relaxed ${cfg.text} opacity-80`}>
-                  {description}
-                </p>
-                <div className="mt-3">
-                  <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${cfg.bg} ${cfg.text} border ${cfg.border}`}>
-                    {cfg.label}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </button>
-    </motion.div>
-  );
-}
 
 export default function JourneyPage() {
   const { language, t } = useLanguage();
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [filter, setFilter] = useState<string>('all');
+  const [activeChapter, setActiveChapter] = useState(0);
 
   useEffect(() => {
     fetch('/api/milestones')
       .then((r) => r.json())
       .then((d) => {
-        const ms = d.milestones ?? [];
+        const ms: Milestone[] = d.milestones ?? [];
         setMilestones(ms);
-        // Auto-open current milestone
-        const currentIdx = ms.findIndex((m: Milestone) => m.isCurrent);
-        if (currentIdx !== -1) setOpenIndex(currentIdx);
+        // Open chapter that has a current milestone
+        const currentMs = ms.find((m) => m.isCurrent);
+        if (currentMs) {
+          const idx = CHAPTERS.findIndex((c) => c.key === currentMs.category);
+          if (idx !== -1) setActiveChapter(idx);
+        }
       })
       .catch(() => setMilestones([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const categories = ['all', ...Array.from(new Set(milestones.map((m) => m.category)))];
-  const filtered = filter === 'all' ? milestones : milestones.filter((m) => m.category === filter);
+  const chapterMilestones = milestones.filter(
+    (m) => m.category === CHAPTERS[activeChapter].key
+  );
+  const colors = CHAPTER_COLORS[CHAPTERS[activeChapter].key];
+  const progress = ((activeChapter + 1) / CHAPTERS.length) * 100;
+
+  const pick = (field: { en: string; ne?: string }) =>
+    language === 'ne' && field.ne ? field.ne : field.en;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
 
-      {/* Header */}
+      {/* Page header */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-10"
       >
-        <motion.div
+        <motion.span
           animate={{ rotate: [0, 10, -10, 10, 0] }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="text-4xl mb-3"
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="text-4xl mb-3 block"
         >
-          🗺️
-        </motion.div>
+          📖
+        </motion.span>
         <h1 style={{ color: 'var(--text-primary)' }} className="text-2xl sm:text-3xl font-semibold mb-2">
           {t('journey.title')}
         </h1>
@@ -159,83 +78,159 @@ export default function JourneyPage() {
         </p>
       </motion.div>
 
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <>
-          {/* Category filter pills */}
-          {milestones.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-wrap gap-2 justify-center mb-8"
-            >
-              {categories.map((cat) => {
-                const cfg = cat === 'all' ? null : CATEGORY_CONFIG[cat];
-                return (
-                  <button
-                    key={cat}
-                    onClick={() => { setFilter(cat); setOpenIndex(null); }}
-                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border transition-all font-medium ${
-                      filter === cat
-                        ? cfg
-                          ? `${cfg.bg} ${cfg.text} ${cfg.border} scale-105`
-                          : 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 border-transparent scale-105'
-                        : 'bg-[var(--surface)] text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:scale-105'
-                    }`}
-                  >
-                    {cfg && <span>{cfg.emoji}</span>}
-                    {cat === 'all' ? 'All chapters' : cfg?.label ?? cat}
-                  </button>
-                );
-              })}
-            </motion.div>
-          )}
-
-          {/* Count */}
-          {milestones.length > 0 && (
-            <p className="text-xs text-gray-400 text-center mb-6">
-              {filtered.length} chapter{filtered.length !== 1 ? 's' : ''} in this story
+      {loading ? <LoadingSpinner /> : (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm"
+        >
+          {/* Book header */}
+          <div className="bg-maroon-700 dark:bg-maroon-900 px-6 py-4 text-center">
+            <p className="text-xs text-maroon-200 dark:text-maroon-400 uppercase tracking-widest mb-1">
+              The story of
             </p>
-          )}
+            <h2 className="text-lg font-semibold text-maroon-50 font-serif" style={{ fontFamily: 'Georgia, serif' }}>
+              Prof. Dhruba Prasad Bhattarai
+            </h2>
+          </div>
 
-          {/* Cards */}
-          <div className="space-y-3">
-            {filtered.map((milestone, i) => (
-              <MilestoneCard
-                key={milestone._id ?? i}
-                milestone={milestone}
-                index={i}
-                isOpen={openIndex === milestones.indexOf(milestone)}
-                onToggle={() => {
-                  const realIdx = milestones.indexOf(milestone);
-                  setOpenIndex(openIndex === realIdx ? null : realIdx);
-                }}
-                language={language}
-              />
+          {/* Chapter tabs */}
+          <div className="grid grid-cols-5 border-b border-gray-200 dark:border-gray-800">
+            {CHAPTERS.map((ch, i) => (
+              <button
+                key={ch.key}
+                onClick={() => setActiveChapter(i)}
+                className={`flex flex-col items-center gap-1 py-3 px-1 text-center transition-all border-r last:border-r-0 border-gray-200 dark:border-gray-800 ${
+                  i === activeChapter
+                    ? 'bg-maroon-700 dark:bg-maroon-900'
+                    : 'bg-[var(--surface)] hover:bg-gray-100 dark:hover:bg-gray-800'
+                }`}
+              >
+                <span className="text-[10px] font-medium" style={{ color: i === activeChapter ? 'rgba(243,237,224,0.5)' : '#aaa' }}>
+                  {ch.short}
+                </span>
+                <span className="text-xl">{ch.icon}</span>
+                <span className="text-[9px] font-medium" style={{ color: i === activeChapter ? 'rgba(243,237,224,0.8)' : '#aaa' }}>
+                  {ch.label}
+                </span>
+              </button>
             ))}
           </div>
 
-          {/* Quote footer */}
-          {milestones.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="mt-14 text-center py-8 border-t border-gray-200 dark:border-gray-800"
+          {/* Chapter content */}
+          <div className="bg-[var(--surface)] dark:bg-gray-900 min-h-[200px] p-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeChapter}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                {chapterMilestones.length === 0 ? (
+                  <div className="text-center py-8">
+                    <span className="text-4xl mb-3 block">{CHAPTERS[activeChapter].icon}</span>
+                    <p className="text-sm text-gray-400">No milestones in this chapter yet.</p>
+                    <p className="text-xs text-gray-400 mt-1">Add them from the admin dashboard.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-5">
+                    {chapterMilestones.map((m, i) => (
+                      <motion.div
+                        key={m._id ?? i}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.08 }}
+                        className="flex gap-4"
+                      >
+                        {/* Year column */}
+                        <div className="flex flex-col items-center flex-shrink-0 pt-1">
+                          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: colors.accent }} />
+                          {i < chapterMilestones.length - 1 && (
+                            <div className="w-px flex-1 mt-1" style={{ background: `${colors.accent}30`, minHeight: '40px' }} />
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <div className="pb-2 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-semibold" style={{ color: colors.accent }}>
+                              {m.isCurrent ? `${m.year} — Present` : m.year}
+                            </span>
+                            {m.isCurrent && (
+                              <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium"
+                                style={{ background: colors.light, color: colors.accent }}>
+                                <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: colors.accent }} />
+                                Now
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                            {pick(m.title)}
+                          </h3>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                            {pick(m.description)}
+                          </p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation footer */}
+          <div className="flex items-center justify-between px-6 py-3 bg-[var(--surface)] dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+            <button
+              onClick={() => setActiveChapter((p) => Math.max(0, p - 1))}
+              disabled={activeChapter === 0}
+              className="text-xs px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              <div className="text-3xl mb-4">✨</div>
-              <p className="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed max-w-lg mx-auto mb-3">
-                &ldquo;The pursuit of knowledge is a journey without a destination — every answer opens a new question.&rdquo;
-              </p>
-              <span className="text-xs font-medium text-maroon-700 dark:text-maroon-400">
-                — Prof. Dhruba Prasad Bhattarai
-              </span>
-            </motion.div>
-          )}
-        </>
+              ← Previous
+            </button>
+
+            <span className="text-xs text-gray-400">
+              Chapter {activeChapter + 1} of {CHAPTERS.length}
+            </span>
+
+            <button
+              onClick={() => setActiveChapter((p) => Math.min(CHAPTERS.length - 1, p + 1))}
+              disabled={activeChapter === CHAPTERS.length - 1}
+              className="text-xs px-4 py-2 rounded-lg bg-maroon-700 dark:bg-maroon-600 text-white hover:bg-maroon-800 dark:hover:bg-maroon-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              Next →
+            </button>
+          </div>
+
+          {/* Progress bar */}
+          <div className="h-1 bg-gray-100 dark:bg-gray-800">
+            <motion.div
+              className="h-full bg-maroon-600 dark:bg-maroon-500"
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.4 }}
+            />
+          </div>
+        </motion.div>
+      )}
+
+      {/* Quote */}
+      {!loading && milestones.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-12 text-center py-8 border-t border-gray-200 dark:border-gray-800"
+        >
+          <div className="text-3xl mb-4">✨</div>
+          <p className="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed max-w-lg mx-auto mb-3">
+            &ldquo;The pursuit of knowledge is a journey without a destination — every answer opens a new question.&rdquo;
+          </p>
+          <span className="text-xs font-medium text-maroon-700 dark:text-maroon-400">
+            — Prof. Dhruba Prasad Bhattarai
+          </span>
+        </motion.div>
       )}
     </div>
   );

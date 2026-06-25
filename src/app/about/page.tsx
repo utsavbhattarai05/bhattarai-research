@@ -95,14 +95,19 @@ export default function AboutPage() {
   const pick     = (f: { en: string; ne?: string }) => language === 'ne' && f.ne ? f.ne : f.en;
   const sections = language === 'ne' ? SECTIONS.ne : SECTIONS.en;
   const current  = sections[active];
-  const interests = language === 'ne' && p.researchInterests.ne?.length
+
+  // Use fallback bio/interests if DB values are empty or too short
+  const bio = pick(p.bio).length > 30 ? pick(p.bio) : pick(FALLBACK.bio);
+  const rawInterests = language === 'ne' && p.researchInterests.ne?.length
     ? p.researchInterests.ne
     : p.researchInterests.en;
+  const interests = rawInterests.length > 0 ? rawInterests
+    : (language === 'ne' ? FALLBACK.researchInterests.ne! : FALLBACK.researchInterests.en);
 
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
+    <div className="max-w-4xl mx-auto px-4 py-10">
       <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="grid grid-cols-[120px_1fr] sm:grid-cols-[140px_1fr]">
 
@@ -141,8 +146,8 @@ export default function AboutPage() {
           <div className="bg-[var(--surface)] p-4 flex flex-col gap-3">
 
             {/* Bio */}
-            <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-              {pick(p.bio)}
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              {bio}
             </p>
 
             {/* Research tags */}

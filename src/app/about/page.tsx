@@ -107,7 +107,7 @@ export default function AboutPage() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="w-full px-4 sm:px-8 py-10">
       <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="grid grid-cols-[120px_1fr] sm:grid-cols-[140px_1fr]">
 

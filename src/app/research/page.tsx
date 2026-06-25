@@ -67,7 +67,7 @@ export default function ResearchPage() {
   const [filteredLoading, setFilteredLoading] = useState(false);
   const [citeTarget, setCiteTarget] = useState<Publication | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const PER_PAGE = 8;
+  const PER_PAGE = 10;
 
   // Load all 3 category counts + initial data
   useEffect(() => {

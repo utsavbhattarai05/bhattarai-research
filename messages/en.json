@@ -73,7 +73,21 @@
     "message": "Message",
     "send": "Send message",
     "success": "Message sent successfully!",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "cardFlipHint": "Flip for contact details",
+    "cardBack": "Contact details",
+    "cardFlipBack": "Flip back",
+    "emailLabel": "Email",
+    "scholarLabel": "Google Scholar",
+    "locationLabel": "Location",
+    "locationValue": "Kathmandu, Nepal",
+    "websiteLabel": "Website",
+    "spinDivider": "Not sure what to say? Spin for inspiration",
+    "spinLabel": "Spin to generate your message topic",
+    "spinBtn": "Spin for a topic!",
+    "spinAgain": "Spin again!",
+    "spinHint": "Spin above — or write your own below!",
+    "replyHint": "Usually replies within 24 hours"
   },
   "citation": {
     "title": "Cite this publication",

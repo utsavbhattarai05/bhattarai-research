@@ -73,24 +73,9 @@ export default function BilingualInput({
   const [tab, setTab] = useState<Tab>('en');
   const [converted, setConverted] = useState(false);
 
-  const handlePaste = (e: React.ClipboardEvent) => {
-    if (tab !== 'ne') return;
-    const html = e.clipboardData.getData('text/html');
-    const text = e.clipboardData.getData('text/plain');
-    if (!text) return;
-
-    // Convert if: font name detected in HTML OR text has zero Devanagari chars (= Preeti/ASCII legacy)
-    const shouldConvert = (html && isLegacyFont(html)) || hasNoDevanagari(text);
-
-    if (shouldConvert) {
-      e.preventDefault();
-      const map = (html && isKantipur(html)) ? KANTIPUR : PREETI;
-      const unicode = convertToUnicode(text, map);
-      onChangeNe(valueNe + unicode);
-      setConverted(true);
-      setTimeout(() => setConverted(false), 3000);
-    }
-    // Unicode Devanagari paste: let browser handle normally
+  const handlePaste = (_e: React.ClipboardEvent) => {
+    // Unicode Nepali (from Google Docs, Google Lens, or Nepali keyboard) pastes directly.
+    // Legacy font conversion is not reliable — use Google Docs to open Preeti PDFs first.
   };
 
   const sharedNeProps = {

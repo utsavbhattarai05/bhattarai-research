@@ -23,12 +23,11 @@ interface Profile {
   researchInterests: { en: string[] };
 }
 
-const HOME_STATS = [
-  { key: 'home.publications',  value: '42' },
-  { key: 'home.downloads',     value: '1.2k' },
-  { key: 'home.yearsActive',   value: '15' },
-  { key: 'home.collaborators', value: '8' },
-];
+interface LiveStats {
+  publications: number;
+  downloads:    number;
+  users:        number;
+}
 
 export default function Home() {
   const { language, t } = useLanguage();
@@ -37,6 +36,7 @@ export default function Home() {
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [selectedPub, setSelectedPub] = useState<Publication | null>(null);
   const [citeTarget, setCiteTarget]   = useState<Publication | null>(null);
+  const [stats, setStats]             = useState<LiveStats | null>(null);
 
   useEffect(() => {
     fetch('/api/profile')
@@ -49,6 +49,12 @@ export default function Home() {
       .then((d) => setFeatured(d.publications ?? []))
       .catch(() => setFeatured([]))
       .finally(() => setLoadingFeatured(false));
+
+    // Live stats from public endpoint
+    fetch('/api/stats')
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d) setStats({ publications: d.publications, downloads: d.downloads, users: d.users }); })
+      .catch(() => null);
   }, []);
 
   // Use fallback when DB value is empty/blank
@@ -108,10 +114,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats */}
+      {/* Stats — live from DB */}
       <section className="border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4">
-          {HOME_STATS.map((stat, i) => (
+          {[
+            { key: 'home.publications', value: stats ? String(stats.publications) : '—' },
+            { key: 'home.downloads',    value: stats ? (stats.downloads >= 1000 ? `${(stats.downloads / 1000).toFixed(1)}k` : String(stats.downloads)) : '—' },
+            { key: 'home.yearsActive',  value: String(new Date().getFullYear() - 2008) },
+            { key: 'home.collaborators', value: stats ? String(stats.users) : '—' },
+          ].map((stat, i) => (
             <div key={i} className="text-center py-8 border-r last:border-r-0 border-gray-200 dark:border-gray-800">
               <StatCard label={t(stat.key)} value={stat.value} />
             </div>

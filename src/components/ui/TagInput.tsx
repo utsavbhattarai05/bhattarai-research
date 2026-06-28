@@ -2,6 +2,7 @@
 
 import { useState, KeyboardEvent } from 'react';
 import { FiX } from 'react-icons/fi';
+import { handleNepaliPaste } from '@/utils/nepaliPaste';
 
 interface TagInputProps {
   tags: string[];
@@ -48,6 +49,9 @@ export default function TagInput({ tags, onChange, placeholder = 'Add item, pres
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKey}
         onBlur={add}
+        onPaste={async (e) => {
+          await handleNepaliPaste(e, input, setInput, () => {});
+        }}
         placeholder={tags.length === 0 ? placeholder : ''}
         className="flex-1 min-w-[120px] text-sm bg-transparent outline-none text-gray-900 dark:text-white placeholder-gray-400"
       />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/components/Providers';
 import { FiSend, FiCheck, FiAlertCircle } from 'react-icons/fi';
 
@@ -33,7 +33,15 @@ const COMBOS_NE = [
 
 export default function ContactPage() {
   const { language, t } = useLanguage();
+  const [profileEmail, setProfileEmail] = useState('');
   const [flipped, setFlipped]   = useState(false);
+
+  useEffect(() => {
+    fetch('/api/profile')
+      .then((r) => r.json())
+      .then((d) => { if (d.profile?.email) setProfileEmail(d.profile.email); })
+      .catch(() => null);
+  }, []);
   const [spinning, setSpinning] = useState(false);
   const [reelVals, setReelVals] = useState(['🤝\nCollab', '📚\nResearch', '🇳🇵\nNepal']);
   const [result, setResult]     = useState<{ icon: string; text: string } | null>(null);
@@ -127,7 +135,7 @@ export default function ContactPage() {
             </div>
             <div className="grid grid-cols-2 gap-2 flex-1">
               {[
-                { icon: '📧', label: t('contact.emailLabel'), val: 'dp.bhattarai@email.com' },
+                { icon: '📧', label: t('contact.emailLabel'), val: profileEmail || 'dp.bhattarai@email.com' },
                 { icon: '🌐', label: t('contact.scholarLabel'), val: language === 'ne' ? 'अनुसन्धान हेर्नुहोस्' : 'View research' },
                 { icon: '📍', label: t('contact.locationLabel'), val: t('contact.locationValue') },
                 { icon: '🌍', label: t('contact.websiteLabel'), val: 'dhrubabhattarai.com.np' },

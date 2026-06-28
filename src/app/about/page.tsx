@@ -73,7 +73,7 @@ const FALLBACK: Profile = {
     en: ['🎵 लोकगीत', '📖 लोककथा', '🪔 संस्कृति', '🗣️ मौखिक', '🇳🇵 Nepal'],
     ne: ['🎵 लोकगीत', '📖 लोककथा', '🪔 संस्कृति', '🗣️ मौखिक परम्परा', '🇳🇵 नेपाल'],
   },
-  email:    'dp.bhattarai@email.com',
+  email:    '',
   location: { en: 'Kathmandu, Nepal', ne: 'काठमाडौं, नेपाल' },
 };
 

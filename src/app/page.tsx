@@ -57,7 +57,7 @@ export default function Home() {
     ? (language === 'ne' && profile.location.ne ? profile.location.ne : profile.location.en)
     : (language === 'ne' ? 'काठमाडौं, नेपाल' : 'Kathmandu, Nepal');
 
-  const email = profile?.email ?? 'dp.bhattarai@email.com';
+  const email = profile?.email || '';
   const initials = language === 'ne' ? 'ध.भ.' : 'DB';
 
   return (

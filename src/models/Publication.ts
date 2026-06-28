@@ -1,8 +1,8 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IPublication extends Document {
-  title: { en: string; ne?: string };
-  abstract: { en: string; ne?: string };
+  title: { en?: string; ne?: string };
+  abstract: { en?: string; ne?: string };
   authors: string[];
   year: number;
   type: 'journal' | 'conference' | 'book_chapter' | 'working_paper' | 'thesis' | 'other';
@@ -23,12 +23,12 @@ export interface IPublication extends Document {
 const PublicationSchema = new Schema<IPublication>(
   {
     title: {
-      en: { type: String, required: true },
-      ne: { type: String },
+      en: { type: String, default: '' },
+      ne: { type: String, default: '' },
     },
     abstract: {
-      en: { type: String, required: true },
-      ne: { type: String },
+      en: { type: String, default: '' },
+      ne: { type: String, default: '' },
     },
     authors: [{ type: String, required: true }],
     year: { type: Number, required: true },

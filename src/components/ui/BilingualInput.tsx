@@ -47,6 +47,11 @@ function isKantipur(html: string): boolean {
   return html.toLowerCase().includes('kantipur');
 }
 
+// True if text has no Devanagari Unicode characters (U+0900–U+097F)
+function hasNoDevanagari(text: string): boolean {
+  return !/[ऀ-ॿ]/.test(text);
+}
+
 function convertToUnicode(text: string, map: Record<string, string>): string {
   return text.split('').map(ch => map[ch] ?? ch).join('');
 }
@@ -60,19 +65,23 @@ export default function BilingualInput({
   const [converted, setConverted] = useState(false);
 
   const handlePaste = (e: React.ClipboardEvent) => {
-    if (tab !== 'ne') return; // only intercept Nepali tab
+    if (tab !== 'ne') return;
     const html = e.clipboardData.getData('text/html');
     const text = e.clipboardData.getData('text/plain');
+    if (!text) return;
 
-    if (html && isLegacyFont(html)) {
+    // Convert if: font name detected in HTML OR text has zero Devanagari chars (= Preeti/ASCII legacy)
+    const shouldConvert = (html && isLegacyFont(html)) || hasNoDevanagari(text);
+
+    if (shouldConvert) {
       e.preventDefault();
-      const map = isKantipur(html) ? KANTIPUR : PREETI;
+      const map = (html && isKantipur(html)) ? KANTIPUR : PREETI;
       const unicode = convertToUnicode(text, map);
       onChangeNe(valueNe + unicode);
       setConverted(true);
       setTimeout(() => setConverted(false), 3000);
     }
-    // else: let browser handle Unicode paste normally
+    // Unicode Devanagari paste: let browser handle normally
   };
 
   const sharedNeProps = {

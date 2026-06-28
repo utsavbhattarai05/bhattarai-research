@@ -104,8 +104,8 @@ export default function EditPublicationPage() {
   const validate = (): boolean => {
     if (!form) return false;
     const e: typeof errors = {};
-    if (!form.title.en.trim())      e.title    = 'English title is required';
-    if (!form.abstract.en.trim())   e.abstract = 'English abstract is required';
+    if (!form.title.en.trim() && !form.title.ne.trim()) e.title = 'Title is required in at least one language';
+    if (!form.abstract.en.trim() && !form.abstract.ne.trim()) e.abstract = 'Abstract is required in at least one language';
     if (form.authors.length === 0)  e.authors  = 'At least one author is required';
     if (!form.year || isNaN(Number(form.year))) e.year = 'Valid year is required';
     if (!form.journal.trim())       e.journal  = 'Journal / venue name is required';

@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useState } from 'react';
@@ -78,7 +79,7 @@ export default function PublicationCard({ publication }: PublicationCardProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 text-xs">
           <button
-            onClick={() => download(publication._id, publication.title.en)}
+            onClick={() => download(publication._id, pickText(publication.title, 'en'))}
             disabled={dlState === 'loading'}
             className={`flex items-center gap-1 transition-colors ${
               dlState === 'done'

@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -20,7 +21,7 @@ const CATEGORIES: { type: PubType; icon: string; labelEn: string; labelNe: strin
 
 /* ── Article row ── */
 function RecentItem({ pub, language, onClick }: { pub: Publication; language: string; onClick: () => void }) {
-  const title = language === 'ne' && pub.title.ne ? pub.title.ne : pub.title.en;
+  const title = pickText(pub.title, language);
   const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
 
   return (
@@ -83,7 +84,7 @@ export default function ResearchPage() {
     const pubs = allPubs[activeType];
     const q = search.toLowerCase();
     const matches = q
-      ? pubs.filter(p => p.title.en.toLowerCase().includes(q) || p.journal?.toLowerCase().includes(q))
+      ? pubs.filter(p => ((p.title.en || '').toLowerCase().includes(q) || (p.title.ne || '').toLowerCase().includes(q)) || p.journal?.toLowerCase().includes(q))
       : pubs;
     const start = (page - 1) * PER_PAGE;
     setFiltered(matches.slice(start, start + PER_PAGE));

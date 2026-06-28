@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,7 +29,7 @@ function MilestoneCard({ milestone, index, isOpen, onToggle, language }: {
   language: string;
 }) {
   const cfg = CATEGORY_CONFIG[milestone.category] ?? CATEGORY_CONFIG.career;
-  const title = language === 'ne' && milestone.title.ne ? milestone.title.ne : milestone.title.en;
+  const title = pickText(milestone.title, language);
   const description = language === 'ne' && milestone.description.ne ? milestone.description.ne : milestone.description.en;
 
   return (

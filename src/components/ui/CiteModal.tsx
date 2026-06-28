@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -143,7 +144,7 @@ export default function CiteModal({ publication, onClose }: CiteModalProps) {
         <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-gray-100 dark:border-gray-800">
           <div>
             <h2 className="text-base font-semibold text-gray-900 dark:text-white">Cite this publication</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{publication.title.en}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{pickText(publication.title, 'en')}</p>
           </div>
           <button
             onClick={onClose}

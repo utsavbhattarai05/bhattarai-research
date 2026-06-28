@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -137,7 +138,7 @@ export default function MilestonesListPage() {
                 {/* Title */}
                 <div className="flex-1 min-w-0">
                   <p style={{ color: 'var(--text-primary)' }} className="text-sm font-medium truncate">
-                    {m.title.en}
+                    {pickText(m.title, 'en')}
                   </p>
                   {m.isCurrent && (
                     <span className="text-[10px] text-maroon-600 dark:text-maroon-400 font-medium">● Current</span>

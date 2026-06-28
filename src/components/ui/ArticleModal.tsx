@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useEffect } from 'react';
@@ -31,8 +32,8 @@ export default function ArticleModal({ pub, language, onClose, onCite }: Article
   if (!pub) return null;
 
   const dlState   = states[pub._id] ?? 'idle';
-  const title     = language === 'ne' && pub.title.ne    ? pub.title.ne    : pub.title.en;
-  const abstract  = language === 'ne' && pub.abstract.ne ? pub.abstract.ne : pub.abstract.en;
+  const title     = pickText(pub.title, language);
+  const abstract  = pickText(pub.abstract, language);
   const url       = typeof window !== 'undefined' ? `${window.location.origin}/research/${pub.slug}` : '';
   const typeIcon  = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
   const typeLabel = pub.type.replace(/_/g, ' ');
@@ -120,7 +121,7 @@ export default function ArticleModal({ pub, language, onClose, onCite }: Article
           {/* Actions */}
           <div className="px-6 pb-5 flex gap-2">
             <button
-              onClick={() => download(pub._id, pub.title.en)}
+              onClick={() => download(pub._id, pickText(pub.title, 'en'))}
               disabled={dlState === 'loading'}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors disabled:opacity-50 ${
                 dlState === 'done'

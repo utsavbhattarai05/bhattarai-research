@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -142,7 +143,7 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               {featured.map((pub) => {
-                const title = language === 'ne' && pub.title.ne ? pub.title.ne : pub.title.en;
+                const title = pickText(pub.title, language);
                 const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
                 return (
                   <button key={pub._id} onClick={() => setSelectedPub(pub)}

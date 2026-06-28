@@ -3,11 +3,92 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/components/Providers';
-import { FiDownload, FiMail, FiMapPin, FiArrowRight } from 'react-icons/fi';
+import { FiDownload, FiMail, FiMapPin, FiArrowRight, FiX, FiExternalLink } from 'react-icons/fi';
 import { HiOutlineBookOpen, HiOutlineSparkles } from 'react-icons/hi';
-import PublicationCard, { Publication } from '@/components/ui/PublicationCard';
+import { Publication } from '@/components/ui/PublicationCard';
+import TagBadge from '@/components/ui/TagBadge';
+import CiteModal from '@/components/ui/CiteModal';
+import ShareButton from '@/components/ui/ShareButton';
 import StatCard from '@/components/ui/StatCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useDownload } from '@/hooks/useDownload';
+import { motion, AnimatePresence } from 'framer-motion';
+
+/* ── Reused article popup (same as research page) ── */
+function ArticleModal({ pub, language, onClose, onCite }: {
+  pub: Publication; language: string; onClose: () => void; onCite: (p: Publication) => void;
+}) {
+  const { download, states } = useDownload();
+  const dlState = states[pub._id] ?? 'idle';
+  const title    = language === 'ne' && pub.title.ne    ? pub.title.ne    : pub.title.en;
+  const abstract = language === 'ne' && pub.abstract.ne ? pub.abstract.ne : pub.abstract.en;
+  const url = typeof window !== 'undefined' ? `${window.location.origin}/research/${pub.slug}` : '';
+  const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
+
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', h); document.body.style.overflow = ''; };
+  }, [onClose]);
+
+  return (
+    <AnimatePresence>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ background: 'rgba(0,0,0,0.6)' }} onClick={onClose}>
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2 }}
+          className="w-full max-w-lg bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-2xl"
+          onClick={(e) => e.stopPropagation()}>
+          <div className="bg-maroon-700 dark:bg-maroon-900 px-5 py-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] text-maroon-200/60 uppercase tracking-widest mb-1">{typeIcon} {pub.type.replace('_',' ')} · {pub.year}</p>
+                <h2 className="text-base font-semibold text-maroon-50 leading-snug" style={{ fontFamily: 'Georgia, serif' }}>{title}</h2>
+              </div>
+              <button onClick={onClose} className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-maroon-200 hover:bg-white/20 transition-colors">
+                <FiX size={14} />
+              </button>
+            </div>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            <p className="text-xs text-gray-500 dark:text-gray-400">{pub.authors.join(', ')} · <span className="italic">{pub.journal}</span></p>
+            {abstract && (
+              <div>
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1.5">{language === 'ne' ? 'सारांश' : 'Abstract'}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-4">{abstract}</p>
+              </div>
+            )}
+            {pub.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">{pub.tags.map(tag => <TagBadge key={tag} label={tag} />)}</div>
+            )}
+            <p className="text-[10px] text-gray-400 dark:text-gray-600">{pub.downloadCount} {language === 'ne' ? 'डाउनलोड' : 'downloads'}</p>
+          </div>
+          <div className="px-5 pb-4 flex gap-2">
+            <button onClick={() => download(pub._id, pub.title.en)} disabled={dlState === 'loading'}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors ${dlState === 'done' ? 'bg-green-600 text-white' : 'bg-maroon-700 dark:bg-maroon-600 hover:bg-maroon-800 text-white'} disabled:opacity-50`}>
+              <FiDownload size={14} />
+              {dlState === 'done' ? (language === 'ne' ? 'डाउनलोड भयो!' : 'Downloaded!') : (language === 'ne' ? 'PDF डाउनलोड' : 'Download PDF')}
+            </button>
+            <button onClick={() => { onCite(pub); onClose(); }} className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+              {language === 'ne' ? 'उद्धरण' : 'Cite'}
+            </button>
+            <div className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+              <ShareButton title={title} url={url} label={language === 'ne' ? 'साझा' : 'Share'} />
+            </div>
+            {pub.doi && (
+              <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer"
+                className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
+                <FiExternalLink size={14} />
+              </a>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
 
 interface Profile {
   name: { en: string; ne?: string };
@@ -28,9 +109,11 @@ const HOME_STATS = [
 
 export default function Home() {
   const { language, t } = useLanguage();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [featured, setFeatured] = useState<Publication[]>([]);
+  const [profile, setProfile]         = useState<Profile | null>(null);
+  const [featured, setFeatured]       = useState<Publication[]>([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
+  const [selectedPub, setSelectedPub] = useState<Publication | null>(null);
+  const [citeTarget, setCiteTarget]   = useState<Publication | null>(null);
 
   useEffect(() => {
     fetch('/api/profile')
@@ -115,6 +198,14 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Article popup */}
+      {selectedPub && (
+        <ArticleModal pub={selectedPub} language={language}
+          onClose={() => setSelectedPub(null)}
+          onCite={(p) => setCiteTarget(p)} />
+      )}
+      <CiteModal publication={citeTarget} onClose={() => setCiteTarget(null)} />
+
       {/* Featured Research */}
       <section className="py-12 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-4xl mx-auto px-4">
@@ -132,10 +223,39 @@ export default function Home() {
           ) : featured.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">No featured publications yet.</p>
           ) : (
-            <div className="space-y-4">
-              {featured.map((pub) => (
-                <PublicationCard key={pub._id} publication={pub} />
-              ))}
+            <div className="space-y-3">
+              {featured.map((pub) => {
+                const title = language === 'ne' && pub.title.ne ? pub.title.ne : pub.title.en;
+                const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
+                return (
+                  <button key={pub._id} onClick={() => setSelectedPub(pub)}
+                    className="w-full text-left bg-[var(--surface)] rounded-xl p-5 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors border border-transparent hover:border-maroon-300 dark:hover:border-maroon-700 group">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-gold-500 font-medium mb-1">
+                          {typeIcon} {t(`research.${pub.type}`)} · {pub.year}
+                        </div>
+                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1 group-hover:text-maroon-700 dark:group-hover:text-maroon-400 transition-colors" style={{ fontFamily: 'Georgia, serif' }}>
+                          {title}
+                        </h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{pub.authors.join(', ')} · {pub.journal}</p>
+                      </div>
+                      <span className="text-gray-300 dark:text-gray-700 group-hover:text-maroon-600 dark:group-hover:text-maroon-400 transition-colors text-lg flex-shrink-0">→</span>
+                    </div>
+                    {pub.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {pub.tags.map(tag => <TagBadge key={tag} label={tag} />)}
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
+                      <span className="text-xs text-maroon-700 dark:text-maroon-400 font-medium">
+                        {language === 'ne' ? 'क्लिक गरेर पढ्नुहोस् →' : 'Click to read & download →'}
+                      </span>
+                      <span className="text-[10px] text-gray-400">{pub.downloadCount} {t('research.downloads')}</span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

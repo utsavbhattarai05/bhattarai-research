@@ -47,7 +47,7 @@ function RecentItem({ pub, language, onClick }: { pub: Publication; language: st
 
 /* ── Main page ── */
 export default function ResearchPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [activeType, setActiveType]   = useState<PubType>('journal');
   const [allPubs, setAllPubs]         = useState<Record<PubType, Publication[]>>({ journal: [], conference: [], book_chapter: [] });
   const [counts, setCounts]           = useState<Record<PubType, number>>({ journal: 0, conference: 0, book_chapter: 0 });
@@ -124,7 +124,7 @@ export default function ResearchPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-5 max-w-5xl mx-auto">
           <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100" style={{ fontFamily: 'Georgia, serif' }}>
-            {language === 'ne' ? 'अनुसन्धान संग्रह' : 'Research Collection'}
+            {t('home.researchCollection')}
           </h1>
           <div className="relative">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-600" size={13} />
@@ -132,7 +132,7 @@ export default function ResearchPage() {
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              placeholder={language === 'ne' ? 'खोज्नुहोस्...' : 'Search...'}
+              placeholder={t('home.searchPlaceholder')}
               style={{ color: 'var(--text-primary)' }}
               className="pl-8 pr-3 py-1.5 text-sm bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/8 rounded-lg w-40 focus:outline-none focus:border-maroon-700/50"
             />
@@ -162,7 +162,7 @@ export default function ResearchPage() {
               <span className={`text-xs transition-colors ${
                 activeType === cat.type ? 'text-maroon-500 dark:text-maroon-700' : 'text-gray-400 dark:text-gray-700'
               }`}>
-                {counts[cat.type]} {language === 'ne' ? 'पत्रहरू' : 'papers'}
+                {counts[cat.type]} {t('home.papers')}
               </span>
             </button>
           ))}
@@ -184,7 +184,7 @@ export default function ResearchPage() {
           {filteredLoading ? (
             <LoadingSpinner />
           ) : filtered.length === 0 ? (
-            <EmptyState message={language === 'ne' ? 'कुनै प्रकाशन फेला परेन।' : 'No publications found.'} />
+            <EmptyState message={t('home.noPublications')} />
           ) : (
             <AnimatePresence mode="wait">
               <motion.div key={`${activeType}-${page}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -201,12 +201,12 @@ export default function ResearchPage() {
             <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-200 dark:border-white/5">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}
                 className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-400 disabled:opacity-30 transition-colors">
-                <FiChevronLeft size={13} /> {language === 'ne' ? 'अघिल्लो' : 'Previous'}
+                <FiChevronLeft size={13} /> {t('home.previous')}
               </button>
               <span className="text-xs text-gray-400 dark:text-gray-700">{page} / {totalPages}</span>
               <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
                 className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-400 disabled:opacity-30 transition-colors">
-                {language === 'ne' ? 'अर्को' : 'Next'} <FiChevronRight size={13} />
+                {t('home.next')} <FiChevronRight size={13} />
               </button>
             </div>
           )}

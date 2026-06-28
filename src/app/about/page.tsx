@@ -78,7 +78,7 @@ const FALLBACK: Profile = {
 };
 
 export default function AboutPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [active, setActive]   = useState(0);
@@ -130,9 +130,9 @@ export default function AboutPage() {
             </div>
             <div className="flex flex-col gap-1.5 w-full mt-1">
               {[
-                { n: '42',   l: language === 'ne' ? 'प्रकाशन' : 'Publications' },
-                { n: '15yr', l: language === 'ne' ? 'अनुभव'   : 'Experience'   },
-                { n: '🇳🇵',  l: language === 'ne' ? 'नेपाल'   : 'Nepal'        },
+                { n: '42',   l: t('home.publications') },
+                { n: '15yr', l: t('about.experience')   },
+                { n: '🇳🇵',  l: t('about.nepal')        },
               ].map((s) => (
                 <div key={s.l} className="bg-black/20 rounded-lg py-1.5 text-center">
                   <div className="text-sm font-bold text-maroon-50" style={{ fontFamily: 'Georgia, serif' }}>{s.n}</div>

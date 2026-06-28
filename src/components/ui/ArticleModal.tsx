@@ -1,6 +1,6 @@
-import { pickText } from '@/utils/pickText';
 'use client';
 
+import { pickText } from '@/utils/pickText';
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiDownload, FiExternalLink } from 'react-icons/fi';

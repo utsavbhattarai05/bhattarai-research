@@ -178,7 +178,7 @@ export default function Home() {
                     )}
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-800">
                       <span className="text-xs text-maroon-700 dark:text-maroon-400 font-medium">
-                        {language === 'ne' ? 'क्लिक गरेर पढ्नुहोस् →' : 'Click to read & download →'}
+                        {t('home.clickToRead')}
                       </span>
                       <span className="text-[10px] text-gray-400">{pub.downloadCount} {t('research.downloads')}</span>
                     </div>

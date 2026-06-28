@@ -23,7 +23,22 @@
     "readMore": "Read more",
     "getInTouch": "Get in touch",
     "email": "Email",
-    "location": "Location"
+    "location": "Location",
+    "noFeatured": "No featured publications yet.",
+    "clickToRead": "Click to read & download →",
+    "researchCollection": "Research Collection",
+    "searchPlaceholder": "Search...",
+    "papers": "papers",
+    "previous": "Previous",
+    "next": "Next",
+    "noPublications": "No publications found.",
+    "abstract": "Abstract",
+    "downloaded": "Downloaded!",
+    "downloadPDF": "Download PDF",
+    "cite": "Cite",
+    "share": "Share",
+    "converting": "Converting to Unicode...",
+    "converted": "Converted to Unicode"
   },
   "research": {
     "title": "Research & publications",
@@ -62,7 +77,18 @@
   "about": {
     "title": "About",
     "researchInterests": "Research interests",
-    "downloadCV": "Download full CV"
+    "downloadCV": "Download full CV",
+    "mission": "His mission",
+    "missionHint": "Why he does this work",
+    "philosophy": "His philosophy",
+    "philosophyHint": "How he thinks",
+    "impact": "His impact",
+    "impactHint": "What he's achieved",
+    "mentor": "As a mentor",
+    "mentorHint": "Beyond research",
+    "impactBody": "42 peer-reviewed publications. Fieldwork in 15+ districts of Nepal. Over 1,200 downloads by researchers worldwide. His documentation of oral traditions has influenced how Nepali universities approach folk literature preservation.",
+    "experience": "Experience",
+    "nepal": "Nepal"
   },
   "contact": {
     "title": "Get in touch",

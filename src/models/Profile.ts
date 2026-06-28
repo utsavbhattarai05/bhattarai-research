@@ -23,15 +23,15 @@ export interface IProfile extends Document {
 const ProfileSchema = new Schema<IProfile>(
   {
     name: {
-      en: { type: String, required: true },
+      en: { type: String, default: '' },
       ne: { type: String },
     },
     title: {
-      en: { type: String, required: true },
+      en: { type: String, default: '' },
       ne: { type: String },
     },
     bio: {
-      en: { type: String, required: true },
+      en: { type: String, default: '' },
       ne: { type: String },
     },
     researchInterests: {
@@ -40,7 +40,7 @@ const ProfileSchema = new Schema<IProfile>(
     },
     photoUrl: { type: String, default: '' },
     cvUrl: { type: String },
-    email: { type: String, required: true },
+    email: { type: String, default: '' },
     location: {
       en: { type: String, default: 'Kathmandu, Nepal' },
       ne: { type: String, default: 'काठमाडौं, नेपाल' },

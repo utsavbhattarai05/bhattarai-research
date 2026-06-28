@@ -3,13 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/components/Providers';
-import { useDownload } from '@/hooks/useDownload';
 import { Publication } from '@/components/ui/PublicationCard';
+import ArticleModal from '@/components/ui/ArticleModal';
 import CiteModal from '@/components/ui/CiteModal';
-import ShareButton from '@/components/ui/ShareButton';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
-import { FiSearch, FiChevronLeft, FiChevronRight, FiX, FiDownload, FiExternalLink } from 'react-icons/fi';
+import { FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 type PubType = 'journal' | 'conference' | 'book_chapter';
 
@@ -18,145 +17,6 @@ const CATEGORIES: { type: PubType; icon: string; labelEn: string; labelNe: strin
   { type: 'conference',   icon: '🎤', labelEn: 'Conference paper', labelNe: 'सम्मेलन पत्र',  recentEn: 'Recent conference papers',  recentNe: 'हालका सम्मेलन पत्रहरू' },
   { type: 'book_chapter', icon: '📗', labelEn: 'Book chapter',     labelNe: 'पुस्तक अध्याय', recentEn: 'Recent book chapters',      recentNe: 'हालका पुस्तक अध्यायहरू' },
 ];
-
-/* ── Article popup modal ── */
-function ArticleModal({
-  pub,
-  language,
-  onClose,
-  onCite,
-}: {
-  pub: Publication;
-  language: string;
-  onClose: () => void;
-  onCite: (p: Publication) => void;
-}) {
-  const { download, states } = useDownload();
-  const dlState = states[pub._id] ?? 'idle';
-  const title    = language === 'ne' && pub.title.ne    ? pub.title.ne    : pub.title.en;
-  const abstract = language === 'ne' && pub.abstract.ne ? pub.abstract.ne : pub.abstract.en;
-  const url = typeof window !== 'undefined' ? `${window.location.origin}/research/${pub.slug}` : '';
-  const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
-
-  // Close on Escape
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [onClose]);
-
-  // Lock body scroll
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
-  }, []);
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style={{ background: 'rgba(0,0,0,0.6)' }}
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 16 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.2 }}
-          className="w-full max-w-2xl bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Maroon header */}
-          <div className="bg-maroon-700 dark:bg-maroon-900 px-5 py-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[10px] text-maroon-200/60 uppercase tracking-widest mb-1">
-                  {typeIcon} {pub.type.replace('_', ' ')} · {pub.year}
-                </p>
-                <h2 className="text-base font-semibold text-maroon-50 leading-snug" style={{ fontFamily: 'Georgia, serif' }}>
-                  {title}
-                </h2>
-              </div>
-              <button onClick={onClose}
-                className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-maroon-200 hover:bg-white/20 transition-colors">
-                <FiX size={14} />
-              </button>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="px-5 py-4 space-y-3">
-            {/* Authors */}
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {pub.authors.join(', ')} · <span className="italic">{pub.journal}</span>
-            </p>
-
-            {/* Abstract */}
-            {abstract && (
-              <div>
-                <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5">
-                  {language === 'ne' ? 'सारांश' : 'Abstract'}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-4">
-                  {abstract}
-                </p>
-              </div>
-            )}
-
-            {/* Tags */}
-            {pub.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {pub.tags.map((tag) => (
-                  <span key={tag} className="text-[10px] px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Download count */}
-            <p className="text-[10px] text-gray-400 dark:text-gray-600">
-              {pub.downloadCount} {language === 'ne' ? 'डाउनलोड' : 'downloads'}
-              {pub.doi && <> · DOI: {pub.doi}</>}
-            </p>
-          </div>
-
-          {/* Action bar */}
-          <div className="px-5 pb-4 flex gap-2">
-            <button
-              onClick={() => download(pub._id, pub.title.en)}
-              disabled={dlState === 'loading'}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                dlState === 'done'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-maroon-700 dark:bg-maroon-600 hover:bg-maroon-800 text-white'
-              } disabled:opacity-50`}
-            >
-              <FiDownload size={14} />
-              {dlState === 'loading' ? '...' : dlState === 'done' ? (language === 'ne' ? 'डाउनलोड भयो!' : 'Downloaded!') : (language === 'ne' ? 'PDF डाउनलोड' : 'Download PDF')}
-            </button>
-            <button onClick={() => { onCite(pub); onClose(); }}
-              className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-              {language === 'ne' ? 'उद्धरण' : 'Cite'}
-            </button>
-            <div className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-              <ShareButton title={title} url={url} label={language === 'ne' ? 'साझा' : 'Share'} />
-            </div>
-            {pub.doi && (
-              <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer"
-                className="px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                <FiExternalLink size={14} />
-              </a>
-            )}
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
 
 /* ── Article row ── */
 function RecentItem({ pub, language, onClick }: { pub: Publication; language: string; onClick: () => void }) {
@@ -248,14 +108,12 @@ export default function ResearchPage() {
   return (
     <>
       {/* Article popup */}
-      {selectedPub && (
-        <ArticleModal
-          pub={selectedPub}
-          language={language}
-          onClose={() => setSelectedPub(null)}
-          onCite={(p) => { setCiteTarget(p); }}
-        />
-      )}
+      <ArticleModal
+        pub={selectedPub}
+        language={language}
+        onClose={() => setSelectedPub(null)}
+        onCite={(p) => setCiteTarget(p)}
+      />
 
       {/* Cite modal */}
       <CiteModal publication={citeTarget} onClose={() => setCiteTarget(null)} />

@@ -50,17 +50,15 @@ export default function Home() {
       .finally(() => setLoadingFeatured(false));
   }, []);
 
-  const name = profile
-    ? (language === 'ne' && profile.name.ne ? profile.name.ne : profile.name.en)
-    : (language === 'ne' ? 'प्रा. ध्रुव प्रसाद भट्टराई' : 'Prof. Dhruba Prasad Bhattarai');
+  // Use fallback when DB value is empty/blank
+  const pick = (f: { en?: string; ne?: string } | undefined, fallback: string) => {
+    const val = language === 'ne' && f?.ne ? f.ne : (f?.en ?? '');
+    return val.trim() ? val : fallback;
+  };
 
-  const bio = profile
-    ? (language === 'ne' && profile.bio.ne ? profile.bio.ne : profile.bio.en)
-    : null;
-
-  const location = profile
-    ? (language === 'ne' && profile.location.ne ? profile.location.ne : profile.location.en)
-    : (language === 'ne' ? 'काठमाडौं, नेपाल' : 'Kathmandu, Nepal');
+  const name     = pick(profile?.name,     language === 'ne' ? 'प्रा. ध्रुव प्रसाद भट्टराई' : 'Prof. Dhruba Prasad Bhattarai');
+  const bio      = pick(profile?.bio,      '');
+  const location = pick(profile?.location, language === 'ne' ? 'काठमाडौं, नेपाल' : 'Kathmandu, Nepal');
 
   const email = profile?.email || '';
   const initials = language === 'ne' ? 'ध.भ.' : 'DB';

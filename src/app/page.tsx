@@ -39,7 +39,7 @@ function ArticleModal({ pub, language, onClose, onCite }: {
         style={{ background: 'rgba(0,0,0,0.6)' }} onClick={onClose}>
         <motion.div initial={{ opacity: 0, scale: 0.95, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2 }}
-          className="w-full max-w-lg bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-2xl"
+          className="w-full max-w-2xl bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-2xl"
           onClick={(e) => e.stopPropagation()}>
           <div className="bg-maroon-700 dark:bg-maroon-900 px-5 py-4">
             <div className="flex items-start justify-between gap-3">

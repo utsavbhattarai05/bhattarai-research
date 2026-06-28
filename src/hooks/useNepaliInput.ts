@@ -1,19 +1,22 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { detectFont } from '@/utils/nepaliConverter';
 
 type FontMode = 'auto' | 'preeti' | 'kantipur' | 'unicode';
 
-export function useNepaliInput(initialValue = '') {
-  const [value, setValue] = useState(initialValue);
-  const [notice, setNotice] = useState('');
+export function useNepaliInput(
+  value: string,
+  onChange: (v: string) => void,
+) {
+  const [notice, setNotice]     = useState('');
   const [fontMode, setFontMode] = useState<FontMode>('auto');
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   const convert = useCallback(async (text: string, mode: FontMode): Promise<string> => {
     const font = mode === 'auto' ? detectFont(text) : mode;
     if (font === 'unicode' || font === 'english') return text;
-
     try {
       const res = await fetch('/api/convert-nepali', {
         method: 'POST',
@@ -37,30 +40,34 @@ export function useNepaliInput(initialValue = '') {
     e.preventDefault();
     const converted = await convert(text, fontMode);
 
-    setValue((prev) => {
-      const el = e.target as HTMLInputElement | HTMLTextAreaElement;
-      const start = el.selectionStart ?? prev.length;
-      const end = el.selectionEnd ?? prev.length;
-      return prev.slice(0, start) + converted + prev.slice(end);
-    });
+    // Insert at cursor position
+    const el = e.target as HTMLInputElement | HTMLTextAreaElement;
+    const start = el.selectionStart ?? value.length;
+    const end   = el.selectionEnd   ?? value.length;
+    const newVal = value.slice(0, start) + converted + value.slice(end);
 
-    const wasConverted = converted !== text;
-    if (wasConverted) {
+    // Call parent onChange so the controlled value updates
+    onChangeRef.current(newVal);
+
+    if (converted !== text) {
       setNotice(`✓ Converted from ${font === 'preeti' ? 'Preeti' : 'Kantipur'} to Unicode`);
       setTimeout(() => setNotice(''), 3000);
     }
-  }, [fontMode, convert]);
+  }, [fontMode, convert, value]);
 
   return {
-    value,
-    setValue,
     notice,
     fontMode,
     setFontMode,
     inputProps: {
       value,
-      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setValue(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+        onChangeRef.current(e.target.value),
       onPaste: handlePaste,
+      lang: 'ne' as const,
+      spellCheck: false as const,
+      autoCorrect: 'off' as const,
+      autoCapitalize: 'off' as const,
     },
   };
 }

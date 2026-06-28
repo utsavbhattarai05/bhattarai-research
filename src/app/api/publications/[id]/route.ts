@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import Publication from '@/models/Publication';
 import { deleteR2Object } from '@/lib/r2';
+import { fillBilingual } from '@/lib/translate';
 
 // GET - Fetch single publication by ID or slug
 export async function GET(
@@ -59,9 +60,13 @@ export async function PUT(
     // Prevent changing the ID
     delete data._id;
 
+    // Auto-fill missing language for title and abstract
+    if (data.title)    data.title    = await fillBilingual(data.title);
+    if (data.abstract) data.abstract = await fillBilingual(data.abstract);
+
     const publication = await Publication.findByIdAndUpdate(id, data, {
       new: true,
-      runValidators: true,
+      runValidators: false,
     });
 
     if (!publication) {

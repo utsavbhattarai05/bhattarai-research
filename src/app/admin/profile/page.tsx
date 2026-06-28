@@ -201,7 +201,8 @@ export default function EditProfilePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField label="Email" required>
               <TextInput
-                type="email"
+                type="text"
+                inputMode="email"
                 value={form.email}
                 onChange={(e) => set('email', e.target.value)}
                 placeholder="dp.bhattarai@email.com"

@@ -50,8 +50,12 @@ body {
 /* Only transition interactive UI elements, never backgrounds or text colors.
    Transitioning background/color causes text to be invisible during theme switch
    because Tailwind dark: classes flip instantly while CSS transitions lag behind. */
-button, a, input, textarea, select {
+button, a, select {
   transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+/* No transitions on inputs — breaks IME composition for Nepali/Devanagari */
+input, textarea {
+  transition: border-color 0.15s ease;
 }
 
 /* Force inputs/textareas to inherit text color from body so they

@@ -53,16 +53,24 @@ export default function BilingualInput({
         <TextareaInput
           value={tab === 'en' ? valueEn : valueNe}
           onChange={(e) => tab === 'en' ? onChangeEn(e.target.value) : onChangeNe(e.target.value)}
-          placeholder={tab === 'en' ? placeholder : `${placeholder ?? ''} (Nepali)`}
+          placeholder={tab === 'en' ? placeholder : `${placeholder ?? ''} (नेपाली)`}
           rows={rows}
           error={error}
+          lang={tab === 'ne' ? 'ne' : 'en'}
+          spellCheck={false}
+          autoCorrect="off"
+          autoCapitalize="off"
         />
       ) : (
         <TextInput
           value={tab === 'en' ? valueEn : valueNe}
           onChange={(e) => tab === 'en' ? onChangeEn(e.target.value) : onChangeNe(e.target.value)}
-          placeholder={tab === 'en' ? placeholder : `${placeholder ?? ''} (Nepali)`}
+          placeholder={tab === 'en' ? placeholder : `${placeholder ?? ''} (नेपाली)`}
           error={error}
+          lang={tab === 'ne' ? 'ne' : 'en'}
+          spellCheck={false}
+          autoCorrect="off"
+          autoCapitalize="off"
         />
       )}
     </div>

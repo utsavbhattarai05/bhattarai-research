@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '@/components/Providers';
 import { FiShare2, FiLink, FiTwitter, FiLinkedin, FiCheck, FiX, FiMail } from 'react-icons/fi';
 import { FaWhatsapp, FaFacebookMessenger, FaFacebook, FaTelegramPlane, FaRedditAlien } from 'react-icons/fa';
 
@@ -10,7 +11,8 @@ interface ShareButtonProps {
   label?: string;
 }
 
-export default function ShareButton({ title, url, label = 'Share' }: ShareButtonProps) {
+export default function ShareButton({ title, url, label }: ShareButtonProps) {
+  const { t } = useLanguage();
   const [open, setOpen]     = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -105,14 +107,14 @@ export default function ShareButton({ title, url, label = 'Share' }: ShareButton
         className="flex items-center gap-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-xs"
       >
         <FiShare2 size={12} />
-        {label}
+        {label ?? t('share.share')}
       </button>
 
       {open && (
         <div className="absolute bottom-7 left-0 z-30 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg py-2 animate-in fade-in slide-in-from-bottom-2 duration-150 max-h-80 overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between px-3 pb-2 border-b border-gray-100 dark:border-gray-800 mb-1 sticky top-0 bg-white dark:bg-gray-900">
-            <span className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Share</span>
+            <span className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('share.share')}</span>
             <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
               <FiX size={13} />
             </button>
@@ -126,7 +128,7 @@ export default function ShareButton({ title, url, label = 'Share' }: ShareButton
             {copied
               ? <FiCheck size={13} className="text-green-500" />
               : <FiLink size={13} className="text-gray-400" />}
-            {copied ? 'Copied!' : 'Copy link'}
+            {copied ? t('share.copied') : t('share.copyLink')}
           </button>
 
           {/* Social options */}

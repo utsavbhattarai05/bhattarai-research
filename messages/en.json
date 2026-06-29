@@ -120,7 +120,16 @@
     "apa": "APA",
     "harvard": "Harvard",
     "bibtex": "BibTeX",
-    "copied": "Copied to clipboard!"
+    "copied": "Copied to clipboard!",
+    "copy": "Copy",
+    "authors": "Authors",
+    "year": "Year",
+    "downloads": "Downloads"
+  },
+  "share": {
+    "share": "Share",
+    "copied": "Copied!",
+    "copyLink": "Copy link"
   },
   "footer": {
     "copyright": "© {year} Dr. Dhruba Prasad Bhattarai. All rights reserved.",

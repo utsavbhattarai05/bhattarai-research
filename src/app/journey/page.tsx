@@ -56,14 +56,14 @@ export default function JourneyPage() {
     language === 'ne' && field.ne ? field.ne : field.en;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="flex flex-col h-[calc(100vh-64px)]">
 
       {loading ? <LoadingSpinner /> : (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-sm"
+          className="flex flex-col flex-1 overflow-hidden border-t border-gray-200 dark:border-gray-800"
         >
           {/* Book header */}
           <div className="bg-maroon-700 dark:bg-maroon-900 px-6 py-4 text-center">
@@ -99,7 +99,7 @@ export default function JourneyPage() {
           </div>
 
           {/* Chapter content */}
-          <div className="bg-[var(--surface)] dark:bg-gray-900 min-h-[200px] p-6">
+          <div className="bg-[var(--surface)] dark:bg-gray-900 flex-1 overflow-y-auto p-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeChapter}
@@ -195,23 +195,6 @@ export default function JourneyPage() {
         </motion.div>
       )}
 
-      {/* Quote */}
-      {!loading && milestones.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center py-8 border-t border-gray-200 dark:border-gray-800"
-        >
-          <div className="text-3xl mb-4">✨</div>
-          <p className="text-sm italic text-gray-500 dark:text-gray-400 leading-relaxed max-w-lg mx-auto mb-3">
-            &ldquo;The pursuit of knowledge is a journey without a destination — every answer opens a new question.&rdquo;
-          </p>
-          <span className="text-xs font-medium text-maroon-700 dark:text-maroon-400">
-            — Prof. Dhruba Prasad Bhattarai
-          </span>
-        </motion.div>
-      )}
     </div>
   );
 }

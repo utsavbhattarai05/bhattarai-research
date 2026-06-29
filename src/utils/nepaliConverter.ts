@@ -5,10 +5,11 @@ export function detectFont(text: string): NepaliFont {
   if (!text || !text.trim()) return 'english';
   // Unicode Devanagari range U+0900–U+097F
   if (/[ऀ-ॿ]/.test(text)) return 'unicode';
-  // Heuristic: Preeti/Kantipur text is mostly ASCII with common Preeti patterns
-  // Preeti uses chars like f, k, g, ; heavily in patterns that don't appear in English
-  const preetiPattern = /[;'\[\]{}\\|<>\/kfguldnmpeqrtsio]{4,}/i;
-  if (preetiPattern.test(text)) return 'preeti';
+  // Preeti uses ; \ | { } [ ] heavily — these rarely appear in plain English prose
+  // Only flag as Preeti if the text has a high ratio of these non-English punctuation chars
+  const preetiSpecial = (text.match(/[;\\|{}\[\]]/g) || []).length;
+  const ratio = preetiSpecial / text.length;
+  if (ratio > 0.08) return 'preeti'; // >8% special chars → likely Preeti
   return 'english';
 }
 

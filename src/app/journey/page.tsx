@@ -24,7 +24,7 @@ const CHAPTER_COLORS: Record<string, { text: string; accent: string; light: stri
 };
 
 export default function JourneyPage() {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeChapter, setActiveChapter] = useState(0);
@@ -56,28 +56,7 @@ export default function JourneyPage() {
     language === 'ne' && field.ne ? field.ne : field.en;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-
-      {/* Page header */}
-      <motion.div
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-10"
-      >
-        <motion.span
-          animate={{ rotate: [0, 10, -10, 10, 0] }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-4xl mb-3 block"
-        >
-          📖
-        </motion.span>
-        <h1 style={{ color: 'var(--text-primary)' }} className="text-2xl sm:text-3xl font-semibold mb-2">
-          {t('journey.title')}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-          {t('journey.subtitle')}
-        </p>
-      </motion.div>
+    <div className="max-w-2xl mx-auto px-4 py-8">
 
       {loading ? <LoadingSpinner /> : (
         <motion.div

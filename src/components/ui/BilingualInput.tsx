@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useNepaliInput } from '@/hooks/useNepaliInput';
-import TextInput from './TextInput';
 import TextareaInput from './TextareaInput';
 
 type Tab = 'en' | 'ne';
@@ -26,13 +25,16 @@ const FONT_MODES: { key: FontMode; label: string }[] = [
   { key: 'unicode',  label: 'Unicode' },
 ];
 
+// Shared class for both EN and NE inputs
+const inputCls = `w-full px-3 py-2.5 text-sm bg-[var(--surface)] border rounded-lg
+  focus:outline-none focus:ring-2 focus:ring-maroon-700/20 dark:focus:ring-maroon-400/20
+  placeholder-gray-400 border-gray-200 dark:border-gray-700`;
+
 export default function BilingualInput({
   valueEn, valueNe, onChangeEn, onChangeNe,
   placeholder, multiline = false, rows = 4, error,
 }: BilingualInputProps) {
   const [tab, setTab] = useState<Tab>('en');
-
-  // Hook receives the controlled value + setter — no internal state needed
   const { notice, fontMode, setFontMode, inputProps: neProps } =
     useNepaliInput(valueNe, onChangeNe);
 
@@ -76,47 +78,60 @@ export default function BilingualInput({
         )}
       </div>
 
-      {/* Conversion success notice */}
+      {/* Conversion notice */}
       {notice && tab === 'ne' && (
-        <p className="text-[11px] text-green-600 dark:text-green-400 mb-1.5">
-          {notice}
-        </p>
+        <p className="text-[11px] text-green-600 dark:text-green-400 mb-1.5">{notice}</p>
       )}
 
-      {/* Input / Textarea */}
-      {multiline ? (
-        tab === 'en' ? (
-          <TextareaInput
-            value={valueEn}
-            onChange={(e) => onChangeEn(e.target.value)}
-            placeholder={placeholder}
-            rows={rows}
-            error={error}
-            disableNepaliPaste
-          />
+      {/* ── English tab — plain raw element, zero wrappers ── */}
+      {tab === 'en' && (
+        multiline ? (
+          <div>
+            <textarea
+              value={valueEn}
+              onChange={(e) => onChangeEn(e.target.value)}
+              placeholder={placeholder}
+              rows={rows}
+              style={{ color: 'var(--text-primary)' }}
+              className={`${inputCls} resize-none`}
+            />
+            {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
+          </div>
         ) : (
-          <TextareaInput
-            {...neProps}
-            placeholder={`${placeholder ?? ''} (नेपाली)`}
-            rows={rows}
-            error={error}
-          />
+          <div>
+            <input
+              type="text"
+              value={valueEn}
+              onChange={(e) => onChangeEn(e.target.value)}
+              placeholder={placeholder}
+              style={{ color: 'var(--text-primary)' }}
+              className={inputCls}
+            />
+            {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
+          </div>
         )
-      ) : (
-        tab === 'en' ? (
-          <TextInput
-            value={valueEn}
-            onChange={(e) => onChangeEn(e.target.value)}
-            placeholder={placeholder}
-            error={error}
-            disableNepaliPaste
-          />
-        ) : (
-          <TextInput
+      )}
+
+      {/* ── Nepali tab — uses hook for Preeti conversion ── */}
+      {tab === 'ne' && (
+        multiline ? (
+          <TextareaInput
             {...neProps}
             placeholder={`${placeholder ?? ''} (नेपाली)`}
+            rows={rows}
             error={error}
           />
+        ) : (
+          <div>
+            <input
+              type="text"
+              {...neProps}
+              placeholder={`${placeholder ?? ''} (नेपाली)`}
+              style={{ color: 'var(--text-primary)' }}
+              className={inputCls}
+            />
+            {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
+          </div>
         )
       )}
 

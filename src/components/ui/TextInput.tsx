@@ -5,9 +5,10 @@ import { handleNepaliPaste } from '@/utils/nepaliPaste';
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
+  disableNepaliPaste?: boolean;
 }
 
-export default function TextInput({ error, className = '', onChange, onPaste, ...props }: TextInputProps) {
+export default function TextInput({ error, className = '', onChange, onPaste, disableNepaliPaste = false, ...props }: TextInputProps) {
   const [notice, setNotice] = useState('');
   const noticeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -18,18 +19,19 @@ export default function TextInput({ error, className = '', onChange, onPaste, ..
   };
 
   const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
-    await handleNepaliPaste(
-      e,
-      String(props.value ?? ''),
-      (newVal) => {
-        if (onChange) {
-          const nativeEvent = Object.create(e.nativeEvent);
-          const syntheticEvent = { ...e, target: { ...e.target, value: newVal }, currentTarget: { ...e.currentTarget, value: newVal } };
-          onChange(syntheticEvent as any);
-        }
-      },
-      showNotice,
-    );
+    if (!disableNepaliPaste) {
+      await handleNepaliPaste(
+        e,
+        String(props.value ?? ''),
+        (newVal) => {
+          if (onChange) {
+            const syntheticEvent = { ...e, target: { ...e.target, value: newVal }, currentTarget: { ...e.currentTarget, value: newVal } };
+            onChange(syntheticEvent as any);
+          }
+        },
+        showNotice,
+      );
+    }
     if (onPaste) onPaste(e);
   };
 

@@ -92,6 +92,7 @@ export default function BilingualInput({
             placeholder={placeholder}
             rows={rows}
             error={error}
+            disableNepaliPaste
           />
         ) : (
           <TextareaInput
@@ -108,6 +109,7 @@ export default function BilingualInput({
             onChange={(e) => onChangeEn(e.target.value)}
             placeholder={placeholder}
             error={error}
+            disableNepaliPaste
           />
         ) : (
           <TextInput

@@ -86,24 +86,30 @@ export default function BilingualInput({
       {/* ── English tab — plain raw element, zero wrappers ── */}
       {tab === 'en' && (
         multiline ? (
-          <div>
+          <div key="en-multi">
             <textarea
+              key="en-textarea"
               value={valueEn}
               onChange={(e) => onChangeEn(e.target.value)}
+              onPaste={(e) => { /* English: allow native paste, no Nepali conversion */ }}
               placeholder={placeholder}
               rows={rows}
+              lang="en"
               style={{ color: 'var(--text-primary)' }}
               className={`${inputCls} resize-none`}
             />
             {error && <p className="mt-1 text-[11px] text-red-500">{error}</p>}
           </div>
         ) : (
-          <div>
+          <div key="en-single">
             <input
+              key="en-input"
               type="text"
               value={valueEn}
               onChange={(e) => onChangeEn(e.target.value)}
+              onPaste={(e) => { /* English: allow native paste, no Nepali conversion */ }}
               placeholder={placeholder}
+              lang="en"
               style={{ color: 'var(--text-primary)' }}
               className={inputCls}
             />

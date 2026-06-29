@@ -60,7 +60,25 @@ const EMPTY: PubForm = {
 };
 
 function slugify(text: string): string {
-  return text
+  // Transliterate common Devanagari vowels/consonants to Latin for slug
+  const devanagariMap: Record<string, string> = {
+    'अ':'a','आ':'aa','इ':'i','ई':'ii','उ':'u','ऊ':'uu','ए':'e','ओ':'o',
+    'क':'k','ख':'kh','ग':'g','घ':'gh','च':'ch','छ':'chh','ज':'j','झ':'jh',
+    'ट':'t','ठ':'th','ड':'d','ढ':'dh','त':'t','थ':'th','द':'d','ध':'dh',
+    'न':'n','ण':'n','प':'p','फ':'ph','ब':'b','भ':'bh','म':'m','य':'y',
+    'र':'r','ल':'l','व':'v','श':'sh','ष':'sh','स':'s','ह':'h',
+    'ा':'a','ि':'i','ी':'i','ु':'u','ू':'u','े':'e','ो':'o','्':'',
+    'ं':'n','ः':'h','ँ':'n','।':'.','ऋ':'ri',
+    '०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9',
+  };
+
+  let result = text;
+  // Apply Devanagari transliteration
+  for (const [ne, en] of Object.entries(devanagariMap)) {
+    result = result.replaceAll(ne, en);
+  }
+
+  return result
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '-')

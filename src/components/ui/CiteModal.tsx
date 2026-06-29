@@ -1,5 +1,5 @@
-import { pickText } from '@/utils/pickText';
 'use client';
+import { pickText } from '@/utils/pickText';
 
 import { useState, useEffect } from 'react';
 import { FiX, FiCheck, FiCopy } from 'react-icons/fi';

@@ -1,5 +1,5 @@
-import { pickText } from '@/utils/pickText';
 'use client';
+import { pickText } from '@/utils/pickText';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';

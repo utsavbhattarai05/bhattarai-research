@@ -58,6 +58,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: BASE_URL,
   },
+  verification: {
+    google: '15df214c18623fe0',
+  },
 };
 
 const personJsonLd = {

@@ -1,4 +1,5 @@
 'use client';
+import { pickText } from '@/utils/pickText';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
@@ -70,8 +71,8 @@ export default function PublicationDetailPage() {
     );
   }
 
-  const title    = language === 'ne' && publication.title.ne ? publication.title.ne : publication.title.en;
-  const abstract = language === 'ne' && publication.abstract.ne ? publication.abstract.ne : publication.abstract.en;
+  const title    = pickText(publication.title, language);
+  const abstract = pickText(publication.abstract, language);
   const dlState  = states[publication._id] ?? 'idle';
   const pageUrl  = typeof window !== 'undefined' ? window.location.href : '';
 

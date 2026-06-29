@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import Publication from '@/models/Publication';
+import { fillBilingual } from '@/lib/translate';
 
 // GET - List publications with filtering and search
 export async function GET(req: NextRequest) {
@@ -95,8 +96,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid year' }, { status: 400 });
     }
 
+    // Auto-fill missing language for title and abstract
+    const [title, abstract] = await Promise.all([
+      fillBilingual(data.title ?? {}),
+      fillBilingual(data.abstract ?? {}),
+    ]);
+
     const publication = await Publication.create({
       ...data,
+      title,
+      abstract,
       year,
       downloadCount: 0,
     });

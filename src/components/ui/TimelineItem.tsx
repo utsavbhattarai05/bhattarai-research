@@ -1,3 +1,4 @@
+import { pickText } from '@/utils/pickText';
 'use client';
 
 import { useRef } from 'react';

@@ -1,212 +1,217 @@
 'use client';
+import { pickText } from '@/utils/pickText';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/components/Providers';
-import { FiSearch, FiFilter, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import PublicationCard, { Publication } from '@/components/ui/PublicationCard';
+import { Publication } from '@/components/ui/PublicationCard';
+import ArticleModal from '@/components/ui/ArticleModal';
+import CiteModal from '@/components/ui/CiteModal';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
+import { FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-const TYPES      = ['journal', 'conference', 'book_chapter', 'working_paper', 'thesis', 'other'];
-const PER_PAGE   = 10;
+type PubType = 'journal' | 'conference' | 'book_chapter';
 
-interface Pagination {
-  page:  number;
-  limit: number;
-  total: number;
-  pages: number;
-}
+const CATEGORIES: { type: PubType; icon: string; labelEn: string; labelNe: string; recentEn: string; recentNe: string }[] = [
+  { type: 'journal',      icon: '📰', labelEn: 'Journal article',  labelNe: 'जर्नल लेख',    recentEn: 'Recent journal articles',  recentNe: 'हालका जर्नल लेखहरू' },
+  { type: 'conference',   icon: '🎤', labelEn: 'Conference paper', labelNe: 'सम्मेलन पत्र',  recentEn: 'Recent conference papers',  recentNe: 'हालका सम्मेलन पत्रहरू' },
+  { type: 'book_chapter', icon: '📗', labelEn: 'Book chapter',     labelNe: 'पुस्तक अध्याय', recentEn: 'Recent book chapters',      recentNe: 'हालका पुस्तक अध्यायहरू' },
+];
 
-export default function ResearchPage() {
-  const { t } = useLanguage();
-  const topRef = useRef<HTMLDivElement>(null);
-
-  const [publications, setPublications] = useState<Publication[]>([]);
-  const [pagination, setPagination]     = useState<Pagination | null>(null);
-  const [loading, setLoading]           = useState(true);
-  const [search, setSearch]             = useState('');
-  const [typeFilter, setTypeFilter]     = useState('');
-  const [yearFilter, setYearFilter]     = useState('');
-  const [page, setPage]                 = useState(1);
-  const [years, setYears]               = useState<number[]>([]);
-
-  const fetchPublications = useCallback(async (p: number) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (search)     params.set('search', search);
-      if (typeFilter) params.set('type',   typeFilter);
-      if (yearFilter) params.set('year',   yearFilter);
-      params.set('page',  String(p));
-      params.set('limit', String(PER_PAGE));
-
-      const res  = await fetch(`/api/publications?${params}`);
-      const data = await res.json();
-      setPublications(data.publications ?? []);
-      setPagination(data.pagination ?? null);
-    } catch {
-      setPublications([]);
-      setPagination(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, typeFilter, yearFilter]);
-
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [search, typeFilter, yearFilter]);
-
-  useEffect(() => {
-    fetchPublications(page);
-  }, [fetchPublications, page]);
-
-  // Fetch available years for the year filter dropdown
-  useEffect(() => {
-    fetch('/api/publications?limit=200')
-      .then((r) => r.json())
-      .then((d) => {
-        const uniq = [...new Set<number>((d.publications ?? []).map((p: Publication) => p.year))].sort((a, b) => b - a);
-        setYears(uniq);
-      });
-  }, []);
-
-  const goTo = (p: number) => {
-    setPage(p);
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const totalPages = pagination?.pages ?? 1;
+/* ── Article row ── */
+function RecentItem({ pub, language, onClick }: { pub: Publication; language: string; onClick: () => void }) {
+  const title = pickText(pub.title, language);
+  const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12" ref={topRef}>
-      {/* Header */}
-      <div className="text-center mb-10">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-2">
-          {t('research.title')}
-        </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {t('research.subtitle')}
-          {pagination && (
-            <span className="ml-2 text-gray-400">— {pagination.total} publication{pagination.total !== 1 ? 's' : ''}</span>
-          )}
+    <motion.button
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      onClick={onClick}
+      className="w-full flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:border-maroon-300 dark:hover:border-maroon-700 transition-all text-left group"
+    >
+      <span className="text-lg flex-shrink-0">{typeIcon}</span>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate" style={{ fontFamily: 'Georgia, serif' }}>
+          {title}
+        </p>
+        <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-0.5">
+          {pub.year} · {pub.journal}
         </p>
       </div>
+      <span className="text-gray-300 dark:text-gray-700 group-hover:text-maroon-600 dark:group-hover:text-maroon-400 transition-colors text-sm flex-shrink-0">→</span>
+    </motion.button>
+  );
+}
 
-      {/* Search & filters */}
-      <div className="mb-8 space-y-3">
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-          <input
-            type="text"
-            placeholder={t('research.searchPlaceholder')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ color: 'var(--text-primary)' }}
-            className="w-full pl-10 pr-4 py-2.5 text-sm bg-[var(--surface)] border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-maroon-700/20 placeholder-gray-400"
-          />
-        </div>
-        <div className="flex gap-3">
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <FiFilter size={14} />
-          </div>
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            style={{ color: 'var(--text-secondary)' }}
-            className="text-xs px-3 py-1.5 bg-[var(--surface)] border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none"
-          >
-            <option value="">{t('research.allTypes')}</option>
-            {TYPES.map((type) => (
-              <option key={type} value={type}>{t(`research.${type}`)}</option>
-            ))}
-          </select>
-          <select
-            value={yearFilter}
-            onChange={(e) => setYearFilter(e.target.value)}
-            style={{ color: 'var(--text-secondary)' }}
-            className="text-xs px-3 py-1.5 bg-[var(--surface)] border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none"
-          >
-            <option value="">{t('research.allYears')}</option>
-            {years.map((year) => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+/* ── Main page ── */
+export default function ResearchPage() {
+  const { language, t } = useLanguage();
+  const [activeType, setActiveType]   = useState<PubType>('journal');
+  const [allPubs, setAllPubs]         = useState<Record<PubType, Publication[]>>({ journal: [], conference: [], book_chapter: [] });
+  const [counts, setCounts]           = useState<Record<PubType, number>>({ journal: 0, conference: 0, book_chapter: 0 });
+  const [loading, setLoading]         = useState(true);
+  const [search, setSearch]           = useState('');
+  const [page, setPage]               = useState(1);
+  const [totalPages, setTotalPages]   = useState(1);
+  const [filtered, setFiltered]       = useState<Publication[]>([]);
+  const [filteredLoading, setFL]      = useState(false);
+  const [selectedPub, setSelectedPub] = useState<Publication | null>(null);
+  const [citeTarget, setCiteTarget]   = useState<Publication | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const PER_PAGE = 10;
 
-      {/* Results */}
-      {loading ? (
-        <LoadingSpinner />
-      ) : publications.length === 0 ? (
-        <EmptyState message={t('research.noResults')} />
-      ) : (
-        <>
-          <div className="space-y-4 mb-8">
-            {publications.map((pub) => (
-              <PublicationCard key={pub._id} publication={pub} />
-            ))}
+  useEffect(() => {
+    const fetchType = async (type: PubType) => {
+      const res = await fetch(`/api/publications?type=${type}&limit=100`);
+      const d = await res.json();
+      return { type, pubs: (d.publications ?? []) as Publication[], count: d.pagination?.total ?? 0 };
+    };
+    Promise.all(CATEGORIES.map(c => fetchType(c.type)))
+      .then(results => {
+        const newAll: Record<PubType, Publication[]> = { journal: [], conference: [], book_chapter: [] };
+        const newCounts: Record<PubType, number> = { journal: 0, conference: 0, book_chapter: 0 };
+        results.forEach(r => { newAll[r.type] = r.pubs; newCounts[r.type] = r.count; });
+        setAllPubs(newAll);
+        setCounts(newCounts);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const applyFilter = useCallback(() => {
+    setFL(true);
+    const pubs = allPubs[activeType];
+    const q = search.toLowerCase();
+    const matches = q
+      ? pubs.filter(p => ((p.title.en || '').toLowerCase().includes(q) || (p.title.ne || '').toLowerCase().includes(q)) || p.journal?.toLowerCase().includes(q))
+      : pubs;
+    const start = (page - 1) * PER_PAGE;
+    setFiltered(matches.slice(start, start + PER_PAGE));
+    setTotalPages(Math.max(1, Math.ceil(matches.length / PER_PAGE)));
+    setFL(false);
+  }, [allPubs, activeType, search, page]);
+
+  useEffect(() => { applyFilter(); }, [applyFilter]);
+
+  const switchType = (type: PubType) => {
+    setActiveType(type);
+    setPage(1);
+    setSearch('');
+    listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const cat = CATEGORIES.find(c => c.type === activeType)!;
+  const recentLabel = language === 'ne' ? cat.recentNe : cat.recentEn;
+
+  if (loading) return <LoadingSpinner />;
+
+  return (
+    <>
+      {/* Article popup */}
+      <ArticleModal
+        pub={selectedPub}
+        language={language}
+        onClose={() => setSelectedPub(null)}
+        onCite={(p) => setCiteTarget(p)}
+      />
+
+      {/* Cite modal */}
+      <CiteModal publication={citeTarget} onClose={() => setCiteTarget(null)} />
+
+      <div className="w-full px-4 sm:px-8 py-8 min-h-screen" style={{ background: 'var(--bg-page)' }}>
+
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5 max-w-5xl mx-auto">
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100" style={{ fontFamily: 'Georgia, serif' }}>
+            {t('home.researchCollection')}
+          </h1>
+          <div className="relative">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-600" size={13} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              placeholder={t('home.searchPlaceholder')}
+              style={{ color: 'var(--text-primary)' }}
+              className="pl-8 pr-3 py-1.5 text-sm bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/8 rounded-lg w-40 focus:outline-none focus:border-maroon-700/50"
+            />
           </div>
+        </div>
+
+        {/* 3 category cards */}
+        <div className="grid grid-cols-3 gap-3 mb-5 max-w-5xl mx-auto">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.type}
+              onClick={() => switchType(cat.type)}
+              className={`flex flex-col items-center gap-2 py-5 rounded-2xl border-2 transition-all duration-200 ${
+                activeType === cat.type
+                  ? 'bg-maroon-50 dark:bg-maroon-900/30 border-maroon-600 dark:border-maroon-700'
+                  : 'bg-white dark:bg-white/[0.02] border-gray-200 dark:border-transparent hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:border-gray-300 dark:hover:border-white/10'
+              }`}
+            >
+              <span className={`text-4xl transition-transform duration-200 ${activeType === cat.type ? 'scale-110' : ''}`}>
+                {cat.icon}
+              </span>
+              <span className={`text-[11px] font-semibold uppercase tracking-widest transition-colors ${
+                activeType === cat.type ? 'text-maroon-700 dark:text-maroon-400' : 'text-gray-500 dark:text-gray-600'
+              }`}>
+                {language === 'ne' ? cat.labelNe : cat.labelEn}
+              </span>
+              <span className={`text-xs transition-colors ${
+                activeType === cat.type ? 'text-maroon-500 dark:text-maroon-700' : 'text-gray-400 dark:text-gray-700'
+              }`}>
+                {counts[cat.type]} {t('home.papers')}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Dynamic recent list */}
+        <div className="max-w-5xl mx-auto" ref={listRef}>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-gray-200 dark:bg-white/5" />
+            <AnimatePresence mode="wait">
+              <motion.span key={recentLabel} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-widest whitespace-nowrap font-medium">
+                {recentLabel}
+              </motion.span>
+            </AnimatePresence>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-white/5" />
+          </div>
+
+          {filteredLoading ? (
+            <LoadingSpinner />
+          ) : filtered.length === 0 ? (
+            <EmptyState message={t('home.noPublications')} />
+          ) : (
+            <AnimatePresence mode="wait">
+              <motion.div key={`${activeType}-${page}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }} className="space-y-2">
+                {filtered.map((pub) => (
+                  <RecentItem key={pub._id} pub={pub} language={language} onClick={() => setSelectedPub(pub)} />
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          )}
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-800 pt-6">
-              {/* Previous */}
-              <button
-                onClick={() => goTo(page - 1)}
-                disabled={page <= 1}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                <FiChevronLeft size={15} /> Previous
+            <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-200 dark:border-white/5">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}
+                className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-400 disabled:opacity-30 transition-colors">
+                <FiChevronLeft size={13} /> {t('home.previous')}
               </button>
-
-              {/* Page numbers */}
-              <div className="hidden sm:flex items-center gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-                  .reduce<(number | '...')[]>((acc, p, idx, arr) => {
-                    if (idx > 0 && typeof arr[idx - 1] === 'number' && (p as number) - (arr[idx - 1] as number) > 1) {
-                      acc.push('...');
-                    }
-                    acc.push(p);
-                    return acc;
-                  }, [])
-                  .map((p, i) =>
-                    p === '...' ? (
-                      <span key={`ellipsis-${i}`} className="px-2 text-gray-400 text-sm">…</span>
-                    ) : (
-                      <button
-                        key={p}
-                        onClick={() => goTo(p as number)}
-                        className={`w-9 h-9 text-sm rounded-lg transition-colors ${
-                          page === p
-                            ? 'bg-maroon-700 dark:bg-maroon-600 text-white font-medium'
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    )
-                  )}
-              </div>
-
-              {/* Mobile page indicator */}
-              <span className="sm:hidden text-sm text-gray-500 dark:text-gray-400">
-                Page {page} of {totalPages}
-              </span>
-
-              {/* Next */}
-              <button
-                onClick={() => goTo(page + 1)}
-                disabled={page >= totalPages}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              >
-                Next <FiChevronRight size={15} />
+              <span className="text-xs text-gray-400 dark:text-gray-700">{page} / {totalPages}</span>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
+                className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-gray-400 disabled:opacity-30 transition-colors">
+                {t('home.next')} <FiChevronRight size={13} />
               </button>
             </div>
           )}
-        </>
-      )}
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

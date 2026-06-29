@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/components/Providers';
+import { pickText } from '@/utils/pickText';
 import Link from 'next/link';
 import { FiArrowLeft, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Publication } from '@/components/ui/PublicationCard';
@@ -13,6 +15,7 @@ import TagBadge from '@/components/ui/TagBadge';
 export default function PublicationsListPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { language } = useLanguage();
   const [publications, setPublications] = useState<Publication[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -81,7 +84,7 @@ export default function PublicationsListPage() {
               {publications.map((pub) => (
                 <tr key={pub._id} className="border-b border-gray-200/50 dark:border-gray-800/50 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div style={{ color: 'var(--text-primary)' }} className="text-sm font-medium line-clamp-1">{pub.title.en}</div>
+                    <div style={{ color: 'var(--text-primary)' }} className="text-sm font-medium line-clamp-1">{pickText(pub.title, language)}</div>
                     <div className="text-xs text-gray-400 mt-0.5">{pub.authors.slice(0, 2).join(', ')}{pub.authors.length > 2 ? ' et al.' : ''}</div>
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 hidden sm:table-cell">{pub.year}</td>

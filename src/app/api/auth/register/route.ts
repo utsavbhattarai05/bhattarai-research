@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
 
-    await User.create({
+    const user = await User.create({
       name, email, phone, password: hashed,
       role: 'user', provider: 'credentials',
       emailVerified: false,
@@ -56,8 +56,18 @@ export async function POST(req: NextRequest) {
       verificationTokenExpiry,
     });
 
-    const { sendVerificationEmail } = await import('@/lib/email');
-    await sendVerificationEmail(email, name, verificationToken);
+    // Try to send verification email — if it fails, roll back the user so they can retry
+    try {
+      const { sendVerificationEmail } = await import('@/lib/email');
+      await sendVerificationEmail(email, name, verificationToken);
+    } catch (emailErr) {
+      console.error('Email send failed, rolling back user:', emailErr);
+      await User.findByIdAndDelete(user._id);
+      return NextResponse.json(
+        { error: 'Account created but verification email could not be sent. Please contact the administrator.' },
+        { status: 503 }
+      );
+    }
 
     return NextResponse.json({ message: 'Account created. Check your email to verify.' }, { status: 201 });
   } catch (error) {

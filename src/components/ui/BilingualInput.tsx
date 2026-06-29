@@ -83,7 +83,7 @@ export default function BilingualInput({
         <p className="text-[11px] text-green-600 dark:text-green-400 mb-1.5">{notice}</p>
       )}
 
-      {/* ── English tab — plain raw element, zero wrappers ── */}
+      {/* ── English tab — plain raw element, explicit paste handler ── */}
       {tab === 'en' && (
         multiline ? (
           <div key="en-multi">
@@ -91,7 +91,16 @@ export default function BilingualInput({
               key="en-textarea"
               value={valueEn}
               onChange={(e) => onChangeEn(e.target.value)}
-              onPaste={(e) => { /* English: allow native paste, no Nepali conversion */ }}
+              onPaste={(e) => {
+                e.stopPropagation();
+                const text = e.clipboardData.getData('text/plain');
+                if (!text) return;
+                e.preventDefault();
+                const el = e.currentTarget;
+                const start = el.selectionStart ?? valueEn.length;
+                const end   = el.selectionEnd   ?? valueEn.length;
+                onChangeEn(valueEn.slice(0, start) + text + valueEn.slice(end));
+              }}
               placeholder={placeholder}
               rows={rows}
               lang="en"
@@ -107,7 +116,16 @@ export default function BilingualInput({
               type="text"
               value={valueEn}
               onChange={(e) => onChangeEn(e.target.value)}
-              onPaste={(e) => { /* English: allow native paste, no Nepali conversion */ }}
+              onPaste={(e) => {
+                e.stopPropagation();
+                const text = e.clipboardData.getData('text/plain');
+                if (!text) return;
+                e.preventDefault();
+                const el = e.currentTarget;
+                const start = el.selectionStart ?? valueEn.length;
+                const end   = el.selectionEnd   ?? valueEn.length;
+                onChangeEn(valueEn.slice(0, start) + text + valueEn.slice(end));
+              }}
               placeholder={placeholder}
               lang="en"
               style={{ color: 'var(--text-primary)' }}

@@ -53,6 +53,52 @@ export async function generateMetadata(
   }
 }
 
-export default function Layout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  let jsonLd: object | null = null;
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/publications/${slug}`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      const { publication: p } = await res.json();
+      jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'ScholarlyArticle',
+        headline: p?.title?.en ?? '',
+        name:     p?.title?.en ?? '',
+        abstract: p?.abstract?.en ?? '',
+        author: (p?.authors ?? []).map((a: string) => ({ '@type': 'Person', name: a })),
+        datePublished: p?.year ? `${p.year}-01-01` : undefined,
+        publisher: {
+          '@type': 'Person',
+          name:    'Dhruba Prasad Bhattarai',
+          url:     BASE_URL,
+        },
+        isPartOf:  p?.journal ? { '@type': 'Periodical', name: p.journal } : undefined,
+        keywords:  (p?.tags ?? []).join(', '),
+        url:       `${BASE_URL}/research/${slug}`,
+        inLanguage: ['en', 'ne'],
+      };
+    }
+  } catch { /* silently skip JSON-LD if fetch fails */ }
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      {children}
+    </>
+  );
 }

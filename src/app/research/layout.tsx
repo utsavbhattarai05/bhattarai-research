@@ -3,10 +3,11 @@ import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
   title:       'Research & Publications',
-  description: 'Browse, search, and download peer-reviewed research papers and publications by Professor Dhruba Prasad Bhattarai covering sustainable development, economic policy, and social impact.',
+  description: 'Browse and download peer-reviewed research papers by Professor Dhruba Prasad Bhattarai — folk literature, oral traditions, and Nepali cultural studies.',
+  keywords:    ['Nepali folk literature research', 'lok sahitya publications', 'Nepal oral traditions', 'Dhruba Bhattarai publications', 'लोक साहित्य अनुसन्धान'],
   openGraph: {
     title:       'Research & Publications — Prof. Dhruba Prasad Bhattarai',
-    description: 'Peer-reviewed papers on sustainable development, economic policy, and social impact.',
+    description: 'Peer-reviewed papers on Nepali folk literature, oral traditions, and cultural studies.',
   },
 };
 

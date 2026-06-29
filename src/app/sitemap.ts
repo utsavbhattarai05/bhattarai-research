@@ -2,6 +2,8 @@ import type { MetadataRoute } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Publication from '@/models/Publication';
 
+export const revalidate = 3600; // regenerate sitemap every hour
+
 const BASE_URL = process.env.NEXTAUTH_URL ?? 'https://dhrubabhattarai.com.np';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

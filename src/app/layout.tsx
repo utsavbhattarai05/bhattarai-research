@@ -17,12 +17,17 @@ export const metadata: Metadata = {
     'Explore the research, publications, and academic journey of Professor Dhruba Prasad Bhattarai — researcher and scholar from Nepal specialising in sustainable development, economic policy, and social impact.',
   keywords: [
     'Dhruba Prasad Bhattarai',
+    'ध्रुव प्रसाद भट्टराई',
     'Nepal research',
-    'academic publications',
+    'folk literature Nepal',
+    'लोक साहित्य',
+    'Nepali folk poetry',
+    'academic publications Nepal',
     'professor Nepal',
-    'sustainable development',
-    'economic policy',
-    'social impact Nepal',
+    'Nepali researcher',
+    'lok sahitya',
+    'Nepal folklore',
+    'Nepali academic',
   ],
   authors: [{ name: 'Prof. Dhruba Prasad Bhattarai' }],
   creator: 'Prof. Dhruba Prasad Bhattarai',
@@ -55,6 +60,35 @@ export const metadata: Metadata = {
   },
 };
 
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Dhruba Prasad Bhattarai',
+  alternateName: 'ध्रुव प्रसाद भट्टराई',
+  url: BASE_URL,
+  jobTitle: 'Researcher & Scholar',
+  description: 'Nepali researcher specialising in folk literature, oral traditions, and cultural studies.',
+  knowsAbout: ['Folk Literature', 'Nepali Oral Traditions', 'Lok Sahitya', 'Cultural Studies', 'Nepal Folklore'],
+  nationality: { '@type': 'Country', name: 'Nepal' },
+  sameAs: [
+    'https://scholar.google.com',
+    BASE_URL,
+  ],
+};
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Dr. Dhruba Prasad Bhattarai',
+  url: BASE_URL,
+  description: 'Official research portal of Prof. Dhruba Prasad Bhattarai — folk literature and cultural studies.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}/research?q={search_term_string}` },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +101,14 @@ export default function RootLayout({
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3580545311067892"
           crossOrigin="anonymous"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body className="antialiased min-h-screen flex flex-col font-sans">

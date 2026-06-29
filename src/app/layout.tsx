@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Inter } from 'next/font/google';
 import "./globals.css";
 import Providers from "@/components/Providers";
+
+const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ToastContainer from "@/components/ui/Toast";
@@ -98,7 +101,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
       <head>
         <script
           async

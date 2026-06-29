@@ -32,39 +32,39 @@
 
 /* ─── Surface / Background ──────────────────────────────────────── */
 :root {
-  --bg-page:    #FFFFFF;
-  --bg-surface: #F8F7F4;   /* cards, inputs */
-  --bg-border:  #E0DFDA;
+  --bg-page:    #F5F4F1;   /* warm off-white — cards stand out */
+  --bg-surface: #FFFFFF;   /* cards, inputs — clean white */
+  --bg-border:  #E4E2DC;   /* warm stone border */
 }
 .dark {
-  --bg-page:    #0f0f0e;
-  --bg-surface: #1a1a18;
-  --bg-border:  #2a2a28;
+  --bg-page:    #18181B;   /* zinc-900 — modern dark, not pure black */
+  --bg-surface: #27272A;   /* zinc-800 — rich card surface */
+  --bg-border:  #3F3F46;   /* zinc-700 — visible structure */
 }
 
 /* ─── Text Colors ───────────────────────────────────────────────── */
 :root {
-  --text-primary:   #111827;   /* headings */
-  --text-secondary: #374151;   /* body paragraphs */
-  --text-muted:     #6b7280;   /* captions, metadata */
-  --text-subtle:    #9ca3af;   /* placeholders, disabled */
-  --text-brand:     #8B1A1A;   /* links, accents */
-  --text-accent:    #B8860B;   /* gold labels */
-  --text-inverse:   #ffffff;   /* text on dark backgrounds */
+  --text-primary:   #1C1917;   /* warm near-black — easier on eyes than #000 */
+  --text-secondary: #44403C;   /* warm stone-700 */
+  --text-muted:     #78716C;   /* warm stone-500 */
+  --text-subtle:    #A8A29E;   /* warm stone-400 — placeholders */
+  --text-brand:     #8B1A1A;   /* maroon — unchanged */
+  --text-accent:    #B8860B;   /* gold — unchanged */
+  --text-inverse:   #ffffff;
 }
 .dark {
-  --text-primary:   #f9fafb;
-  --text-secondary: #d1d5db;
-  --text-muted:     #9ca3af;
-  --text-subtle:    #6b7280;
-  --text-brand:     #e06666;
-  --text-accent:    #d4a843;
+  --text-primary:   #FAFAF9;   /* warm white */
+  --text-secondary: #D4D4D8;   /* zinc-300 */
+  --text-muted:     #A1A1AA;   /* zinc-400 */
+  --text-subtle:    #71717A;   /* zinc-500 */
+  --text-brand:     #E07070;   /* softer maroon for dark bg */
+  --text-accent:    #D4A843;
   --text-inverse:   #ffffff;
 }
 
 /* ─── Typography ────────────────────────────────────────────────── */
 :root {
-  --font-sans:  system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans:  var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:  ui-monospace, 'Courier New', monospace;
 
   /* Scale */

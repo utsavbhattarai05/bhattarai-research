@@ -4,6 +4,7 @@ import { pickText } from '@/utils/pickText';
 import { useState, useEffect } from 'react';
 import { FiX, FiCheck, FiCopy } from 'react-icons/fi';
 import { Publication } from './PublicationCard';
+import { useLanguage } from '@/components/Providers';
 
 interface CiteModalProps {
   publication: Publication | null;
@@ -106,6 +107,7 @@ function generateCitation(pub: Publication, format: Format): string {
 const FORMATS: Format[] = ['APA', 'Harvard', 'MLA', 'BibTeX'];
 
 export default function CiteModal({ publication, onClose }: CiteModalProps) {
+  const { t, language } = useLanguage();
   const [format, setFormat]   = useState<Format>('APA');
   const [copied, setCopied]   = useState(false);
 
@@ -143,8 +145,8 @@ export default function CiteModal({ publication, onClose }: CiteModalProps) {
         {/* Header */}
         <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-gray-100 dark:border-gray-800">
           <div>
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white">Cite this publication</h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{pickText(publication.title, 'en')}</p>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white">{t('citation.title')}</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">{pickText(publication.title, language)}</p>
           </div>
           <button
             onClick={onClose}
@@ -199,15 +201,15 @@ export default function CiteModal({ publication, onClose }: CiteModalProps) {
             }`}
           >
             {copied ? <FiCheck size={15} /> : <FiCopy size={15} />}
-            {copied ? 'Copied to clipboard!' : `Copy ${format} citation`}
+            {copied ? t('citation.copied') : `${t('citation.copy')} ${format}`}
           </button>
 
           {/* Metadata row */}
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-400 pt-1">
-            <span><span className="font-medium text-gray-500 dark:text-gray-500">Authors:</span> {publication.authors.join(', ')}</span>
-            <span><span className="font-medium text-gray-500 dark:text-gray-500">Year:</span> {publication.year}</span>
+            <span><span className="font-medium text-gray-500 dark:text-gray-500">{t('citation.authors')}:</span> {publication.authors.join(', ')}</span>
+            <span><span className="font-medium text-gray-500 dark:text-gray-500">{t('citation.year')}:</span> {publication.year}</span>
             {publication.downloadCount !== undefined && (
-              <span><span className="font-medium text-gray-500 dark:text-gray-500">Downloads:</span> {publication.downloadCount}</span>
+              <span><span className="font-medium text-gray-500 dark:text-gray-500">{t('citation.downloads')}:</span> {publication.downloadCount}</span>
             )}
           </div>
         </div>

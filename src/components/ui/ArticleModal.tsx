@@ -7,6 +7,7 @@ import { FiX, FiDownload, FiExternalLink } from 'react-icons/fi';
 import { Publication } from './PublicationCard';
 import ShareButton from './ShareButton';
 import { useDownload } from '@/hooks/useDownload';
+import { useLanguage } from '@/components/Providers';
 
 interface ArticleModalProps {
   pub: Publication | null;
@@ -16,6 +17,7 @@ interface ArticleModalProps {
 }
 
 export default function ArticleModal({ pub, language, onClose, onCite }: ArticleModalProps) {
+  const { t } = useLanguage();
   const { download, states } = useDownload();
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function ArticleModal({ pub, language, onClose, onCite }: Article
             {abstract && (
               <div>
                 <p className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
-                  {language === 'ne' ? 'सारांश' : 'Abstract'}
+                  {t('research.abstract')}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-5">
                   {abstract}
@@ -113,7 +115,7 @@ export default function ArticleModal({ pub, language, onClose, onCite }: Article
 
             {/* Meta */}
             <p className="text-[11px] text-gray-400 dark:text-gray-600">
-              {pub.downloadCount} {language === 'ne' ? 'डाउनलोड' : 'downloads'}
+              {pub.downloadCount} {t('research.downloads')}
               {pub.doi && <> · DOI: <span className="font-mono">{pub.doi}</span></>}
             </p>
           </div>
@@ -133,19 +135,19 @@ export default function ArticleModal({ pub, language, onClose, onCite }: Article
               {dlState === 'loading'
                 ? '...'
                 : dlState === 'done'
-                ? (language === 'ne' ? 'डाउनलोड भयो!' : 'Downloaded!')
-                : (language === 'ne' ? 'PDF डाउनलोड' : 'Download PDF')}
+                ? t('home.downloaded')
+                : t('research.downloadPDF')}
             </button>
 
             <button
               onClick={() => { onCite(pub); onClose(); }}
               className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
             >
-              {language === 'ne' ? 'उद्धरण' : 'Cite'}
+              {t('research.cite')}
             </button>
 
             <div className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-              <ShareButton title={title} url={url} label={language === 'ne' ? 'साझा' : 'Share'} />
+              <ShareButton title={title} url={url} label={t('research.share')} />
             </div>
 
             {pub.doi && (

@@ -41,11 +41,13 @@ export const metadata: Metadata = {
     title:       'Dr. Dhruba Prasad Bhattarai | Research & Publications',
     description: 'Research, publications, and academic journey of Professor Dhruba Prasad Bhattarai from Nepal.',
     url:         BASE_URL,
+    images: [{ url: `${BASE_URL}/opengraph-image`, width: 1200, height: 630, alt: 'Dr. Dhruba Prasad Bhattarai' }],
   },
   twitter: {
-    card:        'summary',
+    card:        'summary_large_image',
     title:       'Dr. Dhruba Prasad Bhattarai | Research & Publications',
     description: 'Research, publications, and academic journey of Professor Dhruba Prasad Bhattarai from Nepal.',
+    images:      [`${BASE_URL}/opengraph-image`],
   },
   robots: {
     index:  true,
@@ -60,6 +62,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: BASE_URL,
+    languages: { 'en': BASE_URL, 'ne': BASE_URL },
   },
   verification: {
     google: 'wk9vBBC4jqSc_Y4HZDsu9nV-kQhaYH8cNU2IPj7ol4M',
@@ -76,10 +79,7 @@ const personJsonLd = {
   description: 'Nepali researcher specialising in folk literature, oral traditions, and cultural studies.',
   knowsAbout: ['Folk Literature', 'Nepali Oral Traditions', 'Lok Sahitya', 'Cultural Studies', 'Nepal Folklore'],
   nationality: { '@type': 'Country', name: 'Nepal' },
-  sameAs: [
-    'https://scholar.google.com',
-    BASE_URL,
-  ],
+  sameAs: [BASE_URL],
 };
 
 const websiteJsonLd = {

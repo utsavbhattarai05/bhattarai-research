@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-const BASE_URL = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
+const BASE_URL = process.env.NEXTAUTH_URL ?? 'https://dhrubabhattarai.com.np';
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
@@ -37,13 +37,18 @@ export async function generateMetadata(
         publishedTime: p?.year ? `${p.year}-01-01` : undefined,
         authors:       p?.authors ?? [],
         tags:          p?.tags ?? [],
+        images:        [{ url: `${BASE_URL}/opengraph-image`, width: 1200, height: 630, alt: fullTitle }],
       },
       twitter: {
         card:        'summary_large_image',
         title:       fullTitle,
         description,
+        images:      [`${BASE_URL}/opengraph-image`],
       },
-      alternates: { canonical: url },
+      alternates: {
+        canonical: url,
+        languages: { 'en': url, 'ne': url },
+      },
     };
   } catch {
     return {

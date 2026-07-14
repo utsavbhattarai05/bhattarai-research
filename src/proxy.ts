@@ -20,7 +20,10 @@ export default withAuth(
       }
     }
 
-    return NextResponse.next();
+    const res = NextResponse.next();
+    // Let root layout know the pathname so it can set html lang="ne" for /ne/* routes
+    res.headers.set('x-pathname', pathname);
+    return res;
   },
   {
     callbacks: {
@@ -45,5 +48,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/api/download/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/api/download/:path*', '/ne/:path*'],
 };

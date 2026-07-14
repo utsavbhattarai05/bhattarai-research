@@ -7,12 +7,12 @@ import { useLanguage } from '@/components/Providers';
 import { Milestone } from '@/components/ui/TimelineItem';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
-const CHAPTERS: { key: string; icon: string; label: string; short: string }[] = [
-  { key: 'early_life',  icon: '🌱', label: 'Beginnings', short: 'Ch.1' },
-  { key: 'education',   icon: '📚', label: 'Education',  short: 'Ch.2' },
-  { key: 'career',      icon: '💼', label: 'Career',     short: 'Ch.3' },
-  { key: 'research',    icon: '🔬', label: 'Research',   short: 'Ch.4' },
-  { key: 'achievement', icon: '🏆', label: 'Legacy',     short: 'Ch.5' },
+const CHAPTERS: { key: string; icon: string; short: string }[] = [
+  { key: 'early_life',  icon: '🌱', short: 'Ch.1' },
+  { key: 'education',   icon: '📚', short: 'Ch.2' },
+  { key: 'career',      icon: '💼', short: 'Ch.3' },
+  { key: 'research',    icon: '🔬', short: 'Ch.4' },
+  { key: 'achievement', icon: '🏆', short: 'Ch.5' },
 ];
 
 const CHAPTER_COLORS: Record<string, { text: string; accent: string; light: string }> = {
@@ -24,7 +24,7 @@ const CHAPTER_COLORS: Record<string, { text: string; accent: string; light: stri
 };
 
 export default function JourneyPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeChapter, setActiveChapter] = useState(0);
@@ -68,7 +68,7 @@ export default function JourneyPage() {
           {/* Book header */}
           <div className="bg-maroon-700 dark:bg-maroon-900 px-6 py-4 text-center">
             <p className="text-xs text-maroon-200 dark:text-maroon-400 uppercase tracking-widest mb-1">
-              The story of
+              {t('journey.storyOf')}
             </p>
             <h2 className="text-lg font-semibold text-maroon-50 font-serif" style={{ fontFamily: 'Georgia, serif' }}>
               Prof. Dhruba Prasad Bhattarai
@@ -92,7 +92,7 @@ export default function JourneyPage() {
                 </span>
                 <span className="text-xl">{ch.icon}</span>
                 <span className="text-[9px] font-medium" style={{ color: i === activeChapter ? 'rgba(243,237,224,0.8)' : '#aaa' }}>
-                  {ch.label}
+                  {t(`journey.${ch.key}`)}
                 </span>
               </button>
             ))}
@@ -111,8 +111,8 @@ export default function JourneyPage() {
                 {chapterMilestones.length === 0 ? (
                   <div className="text-center py-8">
                     <span className="text-4xl mb-3 block">{CHAPTERS[activeChapter].icon}</span>
-                    <p className="text-sm text-gray-400">No milestones in this chapter yet.</p>
-                    <p className="text-xs text-gray-400 mt-1">Add them from the admin dashboard.</p>
+                    <p className="text-sm text-gray-400">{t('journey.noMilestones')}</p>
+                    <p className="text-xs text-gray-400 mt-1">{t('journey.addFromAdmin')}</p>
                   </div>
                 ) : (
                   <div className="space-y-5">
@@ -136,13 +136,13 @@ export default function JourneyPage() {
                         <div className="pb-2 flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-semibold" style={{ color: colors.accent }}>
-                              {m.isCurrent ? `${m.year} — Present` : m.year}
+                              {m.isCurrent ? `${m.year} — ${t('journey.present')}` : m.year}
                             </span>
                             {m.isCurrent && (
                               <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-medium"
                                 style={{ background: colors.light, color: colors.accent }}>
                                 <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ background: colors.accent }} />
-                                Now
+                                {t('journey.now')}
                               </span>
                             )}
                           </div>
@@ -168,11 +168,11 @@ export default function JourneyPage() {
               disabled={activeChapter === 0}
               className="text-xs px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              ← Previous
+              ← {t('home.previous')}
             </button>
 
             <span className="text-xs text-gray-400">
-              Chapter {activeChapter + 1} of {CHAPTERS.length}
+              {t('journey.chapterOf').replace('{current}', String(activeChapter + 1)).replace('{total}', String(CHAPTERS.length))}
             </span>
 
             <button
@@ -180,7 +180,7 @@ export default function JourneyPage() {
               disabled={activeChapter === CHAPTERS.length - 1}
               className="text-xs px-4 py-2 rounded-lg bg-maroon-700 dark:bg-maroon-600 text-white hover:bg-maroon-800 dark:hover:bg-maroon-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              Next →
+              {t('home.next')} →
             </button>
           </div>
 

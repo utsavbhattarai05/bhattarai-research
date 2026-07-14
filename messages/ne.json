@@ -72,7 +72,13 @@
     "education": "शिक्षा",
     "career": "क्यारियर",
     "research": "अनुसन्धान",
-    "achievement": "उपलब्धि"
+    "achievement": "उपलब्धि",
+    "storyOf": "को कथा",
+    "noMilestones": "यस अध्यायमा अहिलेसम्म कुनै घटना छैन।",
+    "addFromAdmin": "एडमिन ड्यासबोर्डबाट थप्नुहोस्।",
+    "now": "हाल",
+    "chapterOf": "अध्याय {current} / {total}",
+    "present": "हालसम्म"
   },
   "about": {
     "title": "परिचय",

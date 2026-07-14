@@ -72,7 +72,13 @@
     "education": "Education",
     "career": "Career",
     "research": "Research",
-    "achievement": "Achievement"
+    "achievement": "Achievement",
+    "storyOf": "The story of",
+    "noMilestones": "No milestones in this chapter yet.",
+    "addFromAdmin": "Add them from the admin dashboard.",
+    "now": "Now",
+    "chapterOf": "Chapter {current} of {total}",
+    "present": "Present"
   },
   "about": {
     "title": "About",

@@ -3,10 +3,9 @@ import { pickText } from '@/utils/pickText';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { useLanguage } from '@/components/Providers';
 import { Publication } from '@/components/ui/PublicationCard';
-import ArticleModal from '@/components/ui/ArticleModal';
-import CiteModal from '@/components/ui/CiteModal';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
 import { FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -20,28 +19,29 @@ const CATEGORIES: { type: PubType; icon: string; labelEn: string; labelNe: strin
 ];
 
 /* ── Article row ── */
-function RecentItem({ pub, language, onClick }: { pub: Publication; language: string; onClick: () => void }) {
-  const title = pickText(pub.title, language);
+function RecentItem({ pub, language }: { pub: Publication; language: string }) {
+  const title    = pickText(pub.title, language);
   const typeIcon = pub.type === 'journal' ? '📰' : pub.type === 'conference' ? '🎤' : pub.type === 'book_chapter' ? '📗' : '📄';
+  const href     = language === 'ne' ? `/ne/research/${pub.slug}` : `/research/${pub.slug}`;
 
   return (
-    <motion.button
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      onClick={onClick}
-      className="w-full flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:border-maroon-300 dark:hover:border-maroon-700 transition-all text-left group"
-    >
-      <span className="text-lg flex-shrink-0">{typeIcon}</span>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate" style={{ fontFamily: 'Georgia, serif' }}>
-          {title}
-        </p>
-        <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-0.5">
-          {pub.year} · {pub.journal}
-        </p>
-      </div>
-      <span className="text-gray-300 dark:text-gray-700 group-hover:text-maroon-600 dark:group-hover:text-maroon-400 transition-colors text-sm flex-shrink-0">→</span>
-    </motion.button>
+    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+      <Link
+        href={href}
+        className="w-full flex items-center gap-3 bg-white dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-xl px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/[0.04] hover:border-maroon-300 dark:hover:border-maroon-700 transition-all text-left group"
+      >
+        <span className="text-lg flex-shrink-0">{typeIcon}</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-200 truncate" style={{ fontFamily: 'Georgia, serif' }}>
+            {title}
+          </p>
+          <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-0.5">
+            {pub.year} · {pub.journal}
+          </p>
+        </div>
+        <span className="text-gray-300 dark:text-gray-700 group-hover:text-maroon-600 dark:group-hover:text-maroon-400 transition-colors text-sm flex-shrink-0">→</span>
+      </Link>
+    </motion.div>
   );
 }
 
@@ -51,14 +51,12 @@ export default function ResearchPage() {
   const [activeType, setActiveType]   = useState<PubType>('journal');
   const [allPubs, setAllPubs]         = useState<Record<PubType, Publication[]>>({ journal: [], conference: [], book_chapter: [] });
   const [counts, setCounts]           = useState<Record<PubType, number>>({ journal: 0, conference: 0, book_chapter: 0 });
-  const [loading, setLoading]         = useState(true);
-  const [search, setSearch]           = useState('');
-  const [page, setPage]               = useState(1);
-  const [totalPages, setTotalPages]   = useState(1);
-  const [filtered, setFiltered]       = useState<Publication[]>([]);
-  const [filteredLoading, setFL]      = useState(false);
-  const [selectedPub, setSelectedPub] = useState<Publication | null>(null);
-  const [citeTarget, setCiteTarget]   = useState<Publication | null>(null);
+  const [loading, setLoading]       = useState(true);
+  const [search, setSearch]         = useState('');
+  const [page, setPage]             = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filtered, setFiltered]     = useState<Publication[]>([]);
+  const [filteredLoading, setFL]    = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const PER_PAGE = 10;
 
@@ -108,16 +106,6 @@ export default function ResearchPage() {
 
   return (
     <>
-      {/* Article popup */}
-      <ArticleModal
-        pub={selectedPub}
-        language={language}
-        onClose={() => setSelectedPub(null)}
-        onCite={(p) => setCiteTarget(p)}
-      />
-
-      {/* Cite modal */}
-      <CiteModal publication={citeTarget} onClose={() => setCiteTarget(null)} />
 
       <div className="w-full px-4 sm:px-8 py-8 min-h-screen" style={{ background: 'var(--bg-page)' }}>
 
@@ -190,7 +178,7 @@ export default function ResearchPage() {
               <motion.div key={`${activeType}-${page}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }} className="space-y-2">
                 {filtered.map((pub) => (
-                  <RecentItem key={pub._id} pub={pub} language={language} onClick={() => setSelectedPub(pub)} />
+                  <RecentItem key={pub._id} pub={pub} language={language} />
                 ))}
               </motion.div>
             </AnimatePresence>

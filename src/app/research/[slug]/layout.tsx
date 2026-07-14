@@ -47,7 +47,7 @@ export async function generateMetadata(
       },
       alternates: {
         canonical: url,
-        languages: { 'en': url, 'ne': url },
+        languages: { 'en': url, 'ne': `${BASE_URL}/ne/research/${slug}` },
       },
     };
   } catch {

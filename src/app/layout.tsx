@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
+import { headers } from 'next/headers';
 import "./globals.css";
 import Providers from "@/components/Providers";
 
@@ -95,13 +96,16 @@ const websiteJsonLd = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = (await headers()).get('x-pathname') ?? '';
+  const lang = pathname.startsWith('/ne') ? 'ne' : 'en';
+
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang={lang} suppressHydrationWarning className={inter.variable}>
       <head>
         <script
           async

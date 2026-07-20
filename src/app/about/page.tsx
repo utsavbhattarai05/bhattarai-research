@@ -108,6 +108,7 @@ export default function AboutPage() {
 
   return (
     <div className="w-full px-4 sm:px-8 py-10">
+      <h1 className="sr-only">{language === 'ne' ? 'प्रा. डा. ध्रुव प्रसाद भट्टराईको बारेमा' : 'About Prof. Dr. Dhruba Prasad Bhattarai'}</h1>
       <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
         <div className="grid grid-cols-[120px_1fr] sm:grid-cols-[140px_1fr]">
 

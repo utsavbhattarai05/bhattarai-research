@@ -70,9 +70,9 @@ export default function JourneyPage() {
             <p className="text-xs text-maroon-200 dark:text-maroon-400 uppercase tracking-widest mb-1">
               {t('journey.storyOf')}
             </p>
-            <h2 className="text-lg font-semibold text-maroon-50 font-serif" style={{ fontFamily: 'Georgia, serif' }}>
+            <h1 className="text-lg font-semibold text-maroon-50 font-serif" style={{ fontFamily: 'Georgia, serif' }}>
               Prof. Dhruba Prasad Bhattarai
-            </h2>
+            </h1>
           </div>
 
           {/* Chapter tabs */}

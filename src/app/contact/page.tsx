@@ -92,6 +92,7 @@ export default function ContactPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-12">
+      <h1 className="sr-only">{language === 'ne' ? 'प्रा. डा. ध्रुव प्रसाद भट्टराईलाई सम्पर्क गर्नुहोस्' : 'Contact Prof. Dr. Dhruba Prasad Bhattarai'}</h1>
 
       {/* ── Flip card ── */}
       <div
